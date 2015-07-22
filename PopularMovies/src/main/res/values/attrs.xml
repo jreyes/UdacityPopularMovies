@@ -1,0 +1,20 @@
+<resources>
+
+    <declare-styleable name="MarkView">
+        <attr name="mv_strokeWidth" format="dimension" />
+        <attr name="mv_strokeColors" format="reference" />
+        <attr name="mv_ringColor" format="color" />
+        <attr name="mv_ringWidth" format="dimension" />
+        <attr name="mv_textColor" format="color" />
+        <attr name="mv_textSize" format="dimension" />
+        <attr name="mv_mark" format="float" />
+        <attr name="mv_max" format="float" />
+        <attr name="mv_startPoint" format="enum">
+            <enum name="top" value="270" />
+            <enum name="right" value="0" />
+            <enum name="bottom" value="90" />
+            <enum name="left" value="180" />
+        </attr>
+    </declare-styleable>
+
+</resources>

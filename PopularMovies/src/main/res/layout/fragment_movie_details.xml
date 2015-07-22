@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_scrollFlags="scroll|exitUntilCollapsed">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:id="@+id/backdrop_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/backdrop_image"
+                    android:contentDescription="@string/backdrop"
+                    style="@style/backdropDetailsStyle"
+                    app:layout_scrollFlags="scroll|enterAlways" />
+
+                <View style="@style/imageGradientStyle" />
+
+            </FrameLayout>
+
+            <LinearLayout style="@style/movieContainerStyle">
+
+                <TextView
+                    android:id="@+id/title_text"
+                    style="@style/titleTextStyle" />
+
+                <TextView
+                    android:id="@+id/release_date_text"
+                    style="@style/releaseDateTextStyle" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/content_margin_start"
+                    android:layout_marginTop="@dimen/content_margin_end">
+
+                    <com.vaporwarecorp.popularmovies.widget.MarkView
+                        android:id="@+id/rating_circle"
+                        style="@style/markViewStyle"
+                        app:mv_textSize="@dimen/abc_text_size_title_material" />
+
+                    <TextView
+                        android:id="@+id/rating_text"
+                        style="@style/ratingTextStyle" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:text="@string/storyline"
+                    style="@style/overviewTitleStyle" />
+
+                <TextView
+                    android:id="@+id/overview_text"
+                    style="@style/overviewTextStyle" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/poster_image"
+            android:contentDescription="@string/poster"
+            style="@style/posterDetailsStyle"
+            app:layout_anchor="@id/backdrop_container"
+            app:layout_anchorGravity="bottom|left|start" />
+
+    </android.support.design.widget.CoordinatorLayout>
+
+</ScrollView>

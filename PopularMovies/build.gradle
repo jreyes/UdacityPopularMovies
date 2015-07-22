@@ -1,0 +1,56 @@
+apply plugin: 'com.android.application'
+
+android {
+  compileSdkVersion 22
+  buildToolsVersion "23.0.0 rc3"
+
+  defaultConfig {
+    applicationId "com.vaporwarecorp.popularmovies"
+    minSdkVersion 17
+    targetSdkVersion 22
+    versionCode 1
+    versionName "1.0"
+  }
+
+  lintOptions {
+    abortOnError false
+  }
+
+  compileOptions {
+    sourceCompatibility JavaVersion.VERSION_1_6
+    targetCompatibility JavaVersion.VERSION_1_6
+  }
+  buildTypes {
+    release {
+      minifyEnabled false
+      proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    }
+  }
+}
+
+dependencies {
+  // Project Dependencies
+  compile "com.android.support:design:${supportLibraryVersion}"
+  compile "com.android.support:appcompat-v7:${supportLibraryVersion}"
+  compile "com.android.support:palette-v7:${supportLibraryVersion}"
+  compile "com.android.support:recyclerview-v7:${supportLibraryVersion}"
+
+  // Rest
+  compile "com.squareup.retrofit:retrofit:${retrofitVersion}"
+  compile "com.squareup.okhttp:okhttp:${okHttpVersion}"
+  compile "com.squareup.okhttp:okhttp-urlconnection:${okHttpVersion}"
+
+  // Image loading
+  compile "com.github.bumptech.glide:glide:${glideVersion}"
+  compile "com.github.bumptech.glide:okhttp-integration:${glideOkHttpVersion}"
+
+  // Progress Wheel
+  compile "com.pnikosis:materialish-progress:${progressWheelVersion}"
+
+  // Event Bus
+  compile "de.greenrobot:eventbus:${eventBusVersion}"
+
+  // RxJava
+  compile "io.reactivex:rxjava:${rxJavaVersion}"
+  compile "io.reactivex:rxandroid:${rxAndroidVersion}"
+}

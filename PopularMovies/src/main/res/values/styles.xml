@@ -1,0 +1,89 @@
+<resources>
+
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:spinnerItemStyle">@style/spinnerItemStyle</item>
+        <item name="android:spinnerDropDownItemStyle">@style/spinnerDropDownItemStyle</item>
+    </style>
+
+    <style name="spinnerItemStyle" parent="Widget.AppCompat.TextView.SpinnerItem">
+        <item name="android:textSize">@dimen/abc_text_size_title_material_toolbar</item>
+    </style>
+
+    <style name="spinnerDropDownItemStyle" parent="Widget.AppCompat.DropDownItem.Spinner">
+        <item name="android:textSize">@dimen/abc_text_size_title_material_toolbar</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+    </style>
+
+    <style name="markViewStyle">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_marginEnd">@dimen/content_margin_end</item>
+    </style>
+
+    <style name="posterDetailsStyle">
+        <item name="android:layout_width">@dimen/image_width</item>
+        <item name="android:layout_height">@dimen/image_height</item>
+        <item name="android:background">@android:drawable/dialog_holo_light_frame</item>
+        <item name="android:scaleType">fitXY</item>
+        <item name="android:src">@drawable/poster_placeholder</item>
+    </style>
+
+    <style name="backdropDetailsStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:scaleType">centerCrop</item>
+        <item name="android:src">@drawable/backdrop_placeholder</item>
+    </style>
+
+    <style name="movieContainerStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginStart">98dp</item>
+        <item name="android:layout_marginTop">-62dp</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:paddingStart">16dp</item>
+    </style>
+
+    <style name="imageGradientStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@drawable/imageview_gradient_dark</item>
+    </style>
+
+    <style name="ratingTextStyle" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="overviewTitleStyle" parent="TextAppearance.AppCompat.Body2">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">@dimen/content_margin_end</item>
+        <item name="android:textColor">@color/md_yellow_700</item>
+    </style>
+
+    <style name="overviewTextStyle" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">24dp</item>
+    </style>
+
+    <style name="titleTextStyle" parent="TextAppearance.AppCompat.Display1">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/md_yellow_700</item>
+    </style>
+
+    <style name="releaseDateTextStyle" parent="TextAppearance.AppCompat.Body2">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+</resources>
