@@ -13,6 +13,8 @@ import com.vaporwarecorp.popularmovies.R;
 public class AutofitRecyclerView extends EndlessRecyclerView {
 // ------------------------------ FIELDS ------------------------------
 
+    private static final int DEFAULT_SPAN_COUNT = 1;
+
     RecyclerView.ItemDecoration mItemDecoration = new RecyclerView.ItemDecoration() {
         @Override
         public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
@@ -64,13 +66,13 @@ public class AutofitRecyclerView extends EndlessRecyclerView {
 
     @Override
     protected void initLayoutManager() {
-        setLayoutManager(new GridLayoutManager(getContext(), 2));
+        setLayoutManager(new GridLayoutManager(getContext(), DEFAULT_SPAN_COUNT));
     }
 
     @Override
     protected void onMeasure(int widthSpec, int heightSpec) {
         super.onMeasure(widthSpec, heightSpec);
-        if (mColumnWidth > 0) {
+        if (mColumnWidth > 0 && mSpanCount <= DEFAULT_SPAN_COUNT) {
             mSpanCount = Math.max(1, getMeasuredWidth() / mColumnWidth);
             ((GridLayoutManager) getLayoutManager()).setSpanCount(mSpanCount);
             addItemDecoration(mItemDecoration);

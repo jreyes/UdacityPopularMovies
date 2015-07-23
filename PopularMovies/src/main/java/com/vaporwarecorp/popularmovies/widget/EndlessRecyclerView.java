@@ -97,10 +97,8 @@ public class EndlessRecyclerView extends FrameLayout {
 // -------------------------- OTHER METHODS --------------------------
 
     public void addItemDecoration(RecyclerView.ItemDecoration itemDecoration) {
-        if (itemDecoration != null) {
-            mItemDecoration = itemDecoration;
-            mRecyclerView.addItemDecoration(itemDecoration);
-        }
+        mItemDecoration = itemDecoration;
+        mRecyclerView.addItemDecoration(itemDecoration);
     }
 
     public LinearLayoutManager getLayoutManager() {
