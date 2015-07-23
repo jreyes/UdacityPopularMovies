@@ -1,5 +1,10 @@
 <resources>
 
+    <declare-styleable name="AutofitRecyclerView">
+        <attr name="arv_columnWidth" format="dimension" />
+        <attr name="arv_gutterWidth" format="dimension" />
+    </declare-styleable>
+
     <declare-styleable name="MarkView">
         <attr name="mv_strokeWidth" format="dimension" />
         <attr name="mv_strokeColors" format="reference" />

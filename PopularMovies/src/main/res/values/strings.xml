@@ -1,10 +1,15 @@
 <resources>
     <string name="app_name">Popular Movies</string>
-    <string name="title_activity_movie_details">MovieDetailsActivity</string>
+
     <string name="most_popular">Most popular</string>
     <string name="highest_rated">Highest rated</string>
+    <string name="favorites">Favorites</string>
+
     <string name="storyline">STORYLINE</string>
-    <string name="vote_count">from %1$s users</string>
+    <string name="videos">VIDEOS</string>
+    <string name="reviews">REVIEWS</string>
+
     <string name="backdrop">Backdrop</string>
     <string name="poster">Poster</string>
+    <string name="vote_count">from %1$s users</string>
 </resources>

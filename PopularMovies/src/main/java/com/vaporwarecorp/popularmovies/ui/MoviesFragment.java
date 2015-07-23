@@ -1,19 +1,17 @@
 package com.vaporwarecorp.popularmovies.ui;
 
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.pnikosis.materialishprogress.ProgressWheel;
 import com.vaporwarecorp.popularmovies.R;
 import com.vaporwarecorp.popularmovies.events.MovieTypeSelectedEvent;
 import com.vaporwarecorp.popularmovies.model.MoviePager;
 import com.vaporwarecorp.popularmovies.service.MovieApi;
+import com.vaporwarecorp.popularmovies.widget.AutofitRecyclerView;
+import com.vaporwarecorp.popularmovies.widget.EndlessRecyclerView;
 import de.greenrobot.event.EventBus;
 
 import static com.vaporwarecorp.popularmovies.util.ParcelUtil.*;
@@ -21,57 +19,31 @@ import static com.vaporwarecorp.popularmovies.util.ParcelUtil.*;
 public class MoviesFragment extends Fragment {
 // ------------------------------ FIELDS ------------------------------
 
-    private static final int RECYCLER_COLUMNS = 2;
-    private static final int RECYCLER_SPACING = 10;
-
     MovieApi.Callback mCallback = new MovieApi.Callback() {
         @Override
         public void failure() {
-            mLoading = false;
-            mProgressWheel.stopSpinning();
+            mRecyclerView.stopLoadingMore();
         }
 
         @Override
         public void success(MoviePager moviePager) {
-            mLoading = false;
-            mProgressWheel.stopSpinning();
             mPage = moviePager.page;
             mTotalPages = moviePager.totalPages;
             mMovieAdapter.addMovies(moviePager.results);
         }
     };
-    RecyclerView.ItemDecoration mItemDecoration = new RecyclerView.ItemDecoration() {
+    EndlessRecyclerView.OnMoreListener mOnMoreListener = new EndlessRecyclerView.OnMoreListener() {
         @Override
-        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
-            int position = parent.getChildAdapterPosition(view);
-            int column = position % RECYCLER_COLUMNS;
-            outRect.left = column * RECYCLER_SPACING / RECYCLER_COLUMNS;
-            outRect.right = RECYCLER_SPACING - (column + 1) * RECYCLER_SPACING / RECYCLER_COLUMNS;
-            if (position >= RECYCLER_COLUMNS) {
-                outRect.top = RECYCLER_SPACING;
-            }
-        }
-    };
-    RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-
-            if (!mLoading && mPage < mTotalPages &&
-                    mLayoutManager.findLastCompletelyVisibleItemPosition() > mMovieAdapter.getItemCount() - 8) {
-                refreshMovies();
-            }
+        public void onMore() {
+            refreshMovies();
         }
     };
 
     private int mAction;
-    private GridLayoutManager mLayoutManager;
-    private boolean mLoading;
     private MovieAdapter mMovieAdapter;
     private MovieApi mMovieApi;
     private int mPage;
-    private ProgressWheel mProgressWheel;
-    private RecyclerView mRecyclerView;
+    private AutofitRecyclerView mRecyclerView;
     private int mTotalPages;
 
 // -------------------------- OTHER METHODS --------------------------
@@ -81,7 +53,6 @@ public class MoviesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_movies, container, false);
         setEventBus();
-        setProgressWheel(rootView);
         setRecyclerView(rootView);
         setApi(savedInstanceState);
         return rootView;
@@ -90,8 +61,7 @@ public class MoviesFragment extends Fragment {
     @Override
     public void onDestroyView() {
         EventBus.getDefault().unregister(this);
-        mRecyclerView.removeItemDecoration(mItemDecoration);
-        mRecyclerView.clearOnScrollListeners();
+        mRecyclerView.release();
         mMovieApi.release();
         super.onDestroyView();
     }
@@ -101,7 +71,7 @@ public class MoviesFragment extends Fragment {
         if (event.type != mAction) {
             mAction = event.type;
             mPage = 0;
-            mTotalPages = 0;
+            mTotalPages = 1;
             mMovieAdapter.clearMovies();
             refreshMovies();
         }
@@ -117,12 +87,17 @@ public class MoviesFragment extends Fragment {
     }
 
     private void refreshMovies() {
-        mLoading = true;
-        mProgressWheel.spin();
-        if (mAction == 1) {
-            mMovieApi.getPopular(mPage + 1, mCallback);
-        } else {
-            mMovieApi.getTopRated(mPage + 1, mCallback);
+        if (mPage < mTotalPages) {
+            switch (mAction) {
+                case 0:
+                    mMovieApi.getTopRated(mPage + 1, mCallback);
+                    break;
+                case 1:
+                    mMovieApi.getPopular(mPage + 1, mCallback);
+                    break;
+                default:
+                    break;
+            }
         }
     }
 
@@ -142,19 +117,11 @@ public class MoviesFragment extends Fragment {
         EventBus.getDefault().register(this);
     }
 
-    private void setProgressWheel(View view) {
-        mProgressWheel = (ProgressWheel) view.findViewById(R.id.progress_wheel);
-    }
-
     private void setRecyclerView(View view) {
         mMovieAdapter = new MovieAdapter();
-        mLayoutManager = new GridLayoutManager(this.getActivity(), RECYCLER_COLUMNS);
 
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.movie_view);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-        mRecyclerView.addItemDecoration(mItemDecoration);
+        mRecyclerView = (AutofitRecyclerView) view.findViewById(R.id.movie_view);
         mRecyclerView.setAdapter(mMovieAdapter);
-        mRecyclerView.addOnScrollListener(mScrollListener);
+        mRecyclerView.setOnMoreListener(mOnMoreListener);
     }
 }
