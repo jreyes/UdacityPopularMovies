@@ -1,29 +1,24 @@
 package com.vaporwarecorp.popularmovies.adapter;
 
-import android.support.v7.widget.RecyclerView;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import com.vaporwarecorp.popularmovies.R;
 import com.vaporwarecorp.popularmovies.model.Review;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder> {
-// ------------------------------ FIELDS ------------------------------
-
-    private List<Review> mReviews;
-
+public class ReviewAdapter extends ArrayAdapter<Review> {
 // -------------------------- INNER CLASSES --------------------------
 
-    class ReviewViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder {
         TextView author;
         TextView content;
 
-        public ReviewViewHolder(View view) {
-            super(view);
+        public ViewHolder(View view) {
             author = (TextView) view.findViewById(R.id.author_text);
             content = (TextView) view.findViewById(R.id.review_text);
         }
@@ -31,32 +26,28 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
-    public ReviewAdapter() {
-        this.mReviews = new ArrayList<>();
+    public ReviewAdapter(Context context, List<Review> reviews) {
+        super(context, R.layout.review_list_item, reviews);
     }
 
-// -------------------------- OTHER METHODS --------------------------
+// ------------------------ INTERFACE METHODS ------------------------
 
-    public void addReviews(List<Review> reviews) {
-        mReviews.addAll(reviews);
-        notifyDataSetChanged();
-    }
+
+// --------------------- Interface Adapter ---------------------
 
     @Override
-    public int getItemCount() {
-        return mReviews.size();
-    }
-
-    @Override
-    public void onBindViewHolder(ReviewViewHolder reviewViewHolder, int i) {
-        Review review = mReviews.get(i);
-        reviewViewHolder.author.setText(review.author);
-        reviewViewHolder.content.setText(review.content);
-    }
-
-    @Override
-    public ReviewViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.review_list_item, viewGroup, false);
-        return new ReviewViewHolder(view);
+    public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder viewHolder;
+        if (convertView == null) {
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.review_list_item, parent, false);
+            viewHolder = new ViewHolder(convertView);
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
+        }
+        Review review = getItem(position);
+        viewHolder.author.setText(review.author);
+        viewHolder.content.setText(review.content);
+        return convertView;
     }
 }

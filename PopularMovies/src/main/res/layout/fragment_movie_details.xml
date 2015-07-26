@@ -106,7 +106,7 @@
 
         <com.vaporwarecorp.popularmovies.widget.AutofitGridView
             android:id="@+id/videos_view"
-            android:columnWidth="150dp"
+            android:columnWidth="120dp"
             android:numColumns="auto_fit"
             android:stretchMode="columnWidth"
             android:horizontalSpacing="2dp"
@@ -116,10 +116,11 @@
             android:layout_height="wrap_content" />
 
         <TextView
+            android:id="@+id/reviews_title"
             android:text="@string/reviews"
             style="@style/movieDetailsTitleStyle" />
 
-        <ListView
+        <com.vaporwarecorp.popularmovies.widget.AutofitListView
             android:id="@+id/reviews_view"
             android:padding="16dp"
             android:layout_width="match_parent"

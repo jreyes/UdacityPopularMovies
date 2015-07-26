@@ -1,5 +1,6 @@
 package com.vaporwarecorp.popularmovies.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,24 +11,25 @@ import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.vaporwarecorp.popularmovies.BuildConfig;
 import com.vaporwarecorp.popularmovies.PopularMoviesApp;
 import com.vaporwarecorp.popularmovies.R;
 import com.vaporwarecorp.popularmovies.adapter.ReviewAdapter;
 import com.vaporwarecorp.popularmovies.adapter.VideoAdapter;
-import com.vaporwarecorp.popularmovies.model.Movie;
-import com.vaporwarecorp.popularmovies.model.ReviewPager;
-import com.vaporwarecorp.popularmovies.model.Video;
-import com.vaporwarecorp.popularmovies.model.VideoPager;
+import com.vaporwarecorp.popularmovies.model.*;
 import com.vaporwarecorp.popularmovies.service.MovieApi;
 
 import java.util.List;
 
+import static com.google.android.youtube.player.YouTubeStandalonePlayer.createVideoIntent;
 import static com.vaporwarecorp.popularmovies.util.ParcelUtil.getMovie;
 import static com.vaporwarecorp.popularmovies.util.ParcelUtil.setMovie;
 import static com.vaporwarecorp.popularmovies.util.ViewUtil.*;
 
 public class MovieDetailsFragment extends Fragment {
 // ------------------------------ FIELDS ------------------------------
+
+    private static final int REQ_START_STANDALONE_PLAYER = 1;
 
     MovieApi.Callback<ReviewPager> mReviewsCallback = new MovieApi.Callback<ReviewPager>() {
         @Override
@@ -36,7 +38,7 @@ public class MovieDetailsFragment extends Fragment {
 
         @Override
         public void success(ReviewPager reviewPager) {
-            mReviewAdapter.addReviews(reviewPager.results);
+            updateReviewsView(reviewPager.results);
         }
     };
     MovieApi.Callback<VideoPager> mVideosCallback = new MovieApi.Callback<VideoPager>() {
@@ -52,9 +54,8 @@ public class MovieDetailsFragment extends Fragment {
 
     private Movie mMovie;
     private MovieApi mMovieApi;
-    private ReviewAdapter mReviewAdapter;
+    private TextView mReviewsTitle;
     private ListView mReviewsView;
-    private VideoAdapter mVideoAdapter;
     private TextView mVideosTitle;
     private GridView mVideosView;
 
@@ -116,11 +117,8 @@ public class MovieDetailsFragment extends Fragment {
     }
 
     private void initReviewsView(View view) {
-        //mReviewAdapter = new ReviewAdapter();
-
+        mReviewsTitle = (TextView) view.findViewById(R.id.reviews_title);
         mReviewsView = (ListView) view.findViewById(R.id.reviews_view);
-        //mReviewsView.setAdapter(mReviewAdapter);
-
         mMovieApi.getReviews(mMovie.id, mReviewsCallback);
     }
 
@@ -140,6 +138,17 @@ public class MovieDetailsFragment extends Fragment {
         setPoster(view, mMovie.posterPath);
     }
 
+    private void updateReviewsView(List<Review> reviews) {
+        if (reviews.isEmpty()) {
+            hide(mReviewsTitle);
+            hide(mReviewsView);
+        } else {
+            show(mReviewsTitle);
+            show(mReviewsView);
+            mReviewsView.setAdapter(new ReviewAdapter(getActivity(), reviews));
+        }
+    }
+
     private void updateVideosView(List<Video> videos) {
         if (videos.isEmpty()) {
             hide(mVideosTitle);
@@ -148,6 +157,11 @@ public class MovieDetailsFragment extends Fragment {
             show(mVideosTitle);
             show(mVideosView);
             mVideosView.setAdapter(new VideoAdapter(getActivity(), videos));
+            mVideosView.setOnItemClickListener((parent, view, position, id) -> {
+                Video video = (Video) parent.getItemAtPosition(position);
+                Intent intent = createVideoIntent(getActivity(), BuildConfig.YOUTUBE_API_KEY, video.key, 0, true, false);
+                startActivityForResult(intent, REQ_START_STANDALONE_PLAYER);
+            });
         }
     }
 }

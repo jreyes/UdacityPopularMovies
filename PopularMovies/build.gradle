@@ -12,8 +12,8 @@ android {
     versionCode 1
     versionName "1.0"
 
-    buildConfigField "String", "MOVIEDB_API_KEY", '""'
-    buildConfigField "String", "YOUTUBE_API_KEY", '""'
+    buildConfigField "String", "MOVIEDB_API_KEY", '"1147744ccc52f6ec174a65a4a6727e48"'
+    buildConfigField "String", "YOUTUBE_API_KEY", '"AIzaSyCbBcynWNwL3AuBdIncPwa3bSmIiY4EFKs"'
   }
 
   lintOptions {
