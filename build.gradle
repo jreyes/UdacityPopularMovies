@@ -5,6 +5,7 @@ buildscript {
   }
   dependencies {
     classpath 'com.android.tools.build:gradle:1.2.3'
+    classpath 'me.tatarka:gradle-retrolambda:3.1.0'
   }
 }
 
@@ -21,6 +22,8 @@ ext {
   junitVersion = "4.12"
   espressoVersion = "2.0"
   androidTestRunnerVersion = "0.2"
+  timberVersion = "3.1.0"
+  leakCanaryVersion = "1.3.1"
 }
 
 allprojects {

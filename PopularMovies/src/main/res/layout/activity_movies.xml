@@ -4,17 +4,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".ui.MoviesActivity">
+    tools:context=".activity.MoviesActivity">
 
     <include
-        android:id="@+id/toolbar"
+        android:id="@id/toolbar"
         layout="@layout/toolbar_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <fragment
         android:id="@+id/movies_fragment"
-        android:name="com.vaporwarecorp.popularmovies.ui.MoviesFragment"
+        android:name="com.vaporwarecorp.popularmovies.fragment.MoviesFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:layout="@layout/fragment_movies" />

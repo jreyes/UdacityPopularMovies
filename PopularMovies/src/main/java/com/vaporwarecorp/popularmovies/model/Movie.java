@@ -3,6 +3,8 @@ package com.vaporwarecorp.popularmovies.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Date;
+
 public class Movie implements Parcelable {
 // ------------------------------ FIELDS ------------------------------
 
@@ -21,7 +23,7 @@ public class Movie implements Parcelable {
     public final String originalTitle;
     public final String overview;
     public final String posterPath;
-    public final String releaseDate;
+    public final Date releaseDate;
     public final float voteAverage;
     public final String voteCount;
 
@@ -34,7 +36,7 @@ public class Movie implements Parcelable {
                 in.readString(),
                 in.readString(),
                 in.readString(),
-                in.readString(),
+                new Date(in.readLong()),
                 in.readFloat(),
                 in.readString()
         );
@@ -45,7 +47,7 @@ public class Movie implements Parcelable {
                  String originalTitle,
                  String overview,
                  String posterPath,
-                 String releaseDate,
+                 Date releaseDate,
                  float voteAverage,
                  String voteCount) {
         this.backdropPath = backdropPath;
@@ -91,7 +93,7 @@ public class Movie implements Parcelable {
         dest.writeString(originalTitle);
         dest.writeString(overview);
         dest.writeString(posterPath);
-        dest.writeString(releaseDate);
+        dest.writeLong(releaseDate.getTime());
         dest.writeFloat(voteAverage);
         dest.writeString(voteCount);
     }

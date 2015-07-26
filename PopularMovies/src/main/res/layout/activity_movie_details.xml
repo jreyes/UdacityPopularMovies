@@ -4,17 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.MoviesActivity">
+    tools:context=".activity.MoviesActivity">
 
-    <fragment
-        android:id="@+id/movie_details_fragment"
-        android:name="com.vaporwarecorp.popularmovies.ui.MovieDetailsFragment"
+    <FrameLayout
+        android:id="@+id/movie_details_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:layout="@layout/fragment_movie_details" />
+        android:layout_height="match_parent" />
 
     <android.support.v7.widget.Toolbar
-        android:id="@+id/movie_details_toolbar"
+        android:id="@id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@android:color/transparent"

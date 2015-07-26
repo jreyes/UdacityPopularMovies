@@ -1,6 +1,5 @@
-package com.vaporwarecorp.popularmovies.ui;
+package com.vaporwarecorp.popularmovies.adapter;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,12 +13,11 @@ import de.greenrobot.event.EventBus;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.vaporwarecorp.popularmovies.util.ViewUtil.setImage;
+import static com.vaporwarecorp.popularmovies.util.ViewUtil.setPoster;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
 // ------------------------------ FIELDS ------------------------------
 
-    private Context mContext;
     private ArrayList<Movie> mMovies;
 
 // -------------------------- INNER CLASSES --------------------------
@@ -42,7 +40,7 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 // --------------------------- CONSTRUCTORS ---------------------------
 
     public MovieAdapter() {
-        this.mMovies = new ArrayList<Movie>();
+        this.mMovies = new ArrayList<>();
     }
 
 // -------------------------- OTHER METHODS --------------------------
@@ -68,13 +66,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
 
     @Override
     public void onBindViewHolder(MovieViewHolder movieViewHolder, int i) {
-        setImage(mContext, movieViewHolder.poster, R.drawable.poster_placeholder, mMovies.get(i).posterPath);
+        setPoster(movieViewHolder.poster, mMovies.get(i).posterPath);
     }
 
     @Override
     public MovieViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        mContext = viewGroup.getContext();
-        View view = LayoutInflater.from(mContext).inflate(R.layout.movie_list_item, viewGroup, false);
+        View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.movie_list_item, viewGroup, false);
         return new MovieViewHolder(view);
     }
 }

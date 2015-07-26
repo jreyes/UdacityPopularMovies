@@ -1,4 +1,4 @@
-package com.vaporwarecorp.popularmovies.ui;
+package com.vaporwarecorp.popularmovies.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -6,12 +6,13 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import com.vaporwarecorp.popularmovies.PopularMoviesApp;
 import com.vaporwarecorp.popularmovies.R;
+import com.vaporwarecorp.popularmovies.adapter.MovieAdapter;
 import com.vaporwarecorp.popularmovies.events.MovieTypeSelectedEvent;
 import com.vaporwarecorp.popularmovies.model.MoviePager;
 import com.vaporwarecorp.popularmovies.service.MovieApi;
 import com.vaporwarecorp.popularmovies.widget.AutofitRecyclerView;
-import com.vaporwarecorp.popularmovies.widget.EndlessRecyclerView;
 import de.greenrobot.event.EventBus;
 
 import static com.vaporwarecorp.popularmovies.util.ParcelUtil.*;
@@ -19,7 +20,7 @@ import static com.vaporwarecorp.popularmovies.util.ParcelUtil.*;
 public class MoviesFragment extends Fragment {
 // ------------------------------ FIELDS ------------------------------
 
-    MovieApi.Callback mCallback = new MovieApi.Callback() {
+    MovieApi.Callback<MoviePager> mCallback = new MovieApi.Callback<MoviePager>() {
         @Override
         public void failure() {
             mRecyclerView.stopLoadingMore();
@@ -30,12 +31,6 @@ public class MoviesFragment extends Fragment {
             mPage = moviePager.page;
             mTotalPages = moviePager.totalPages;
             mMovieAdapter.addMovies(moviePager.results);
-        }
-    };
-    EndlessRecyclerView.OnMoreListener mOnMoreListener = new EndlessRecyclerView.OnMoreListener() {
-        @Override
-        public void onMore() {
-            refreshMovies();
         }
     };
 
@@ -50,12 +45,18 @@ public class MoviesFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_movies, container, false);
-        setEventBus();
-        setRecyclerView(rootView);
-        setApi(savedInstanceState);
+        initEventBus();
+        initRecyclerView(rootView);
+        initApi(savedInstanceState);
         return rootView;
+    }
+
+    @Override
+    public void onDestroy() {
+        PopularMoviesApp.watch(getActivity());
+        super.onDestroy();
     }
 
     @Override
@@ -86,6 +87,30 @@ public class MoviesFragment extends Fragment {
         setTotalPages(outState, mTotalPages);
     }
 
+    private void initApi(Bundle savedInstanceState) {
+        mMovieApi = new MovieApi(getActivity().getApplication());
+        if (savedInstanceState != null) {
+            mAction = getAction(savedInstanceState);
+            mPage = getPage(savedInstanceState);
+            mTotalPages = getTotalPages(savedInstanceState);
+            mMovieAdapter.addMovies(getMovies(savedInstanceState));
+        } else {
+            mAction = -1;
+        }
+    }
+
+    private void initEventBus() {
+        EventBus.getDefault().register(this);
+    }
+
+    private void initRecyclerView(View view) {
+        mMovieAdapter = new MovieAdapter();
+
+        mRecyclerView = (AutofitRecyclerView) view.findViewById(R.id.movie_view);
+        mRecyclerView.setAdapter(mMovieAdapter);
+        mRecyclerView.setOnMoreListener(this::refreshMovies);
+    }
+
     private void refreshMovies() {
         if (mPage < mTotalPages) {
             switch (mAction) {
@@ -98,30 +123,8 @@ public class MoviesFragment extends Fragment {
                 default:
                     break;
             }
-        }
-    }
-
-    private void setApi(Bundle savedInstanceState) {
-        mMovieApi = new MovieApi();
-        if (savedInstanceState != null) {
-            mAction = getAction(savedInstanceState);
-            mPage = getPage(savedInstanceState);
-            mTotalPages = getTotalPages(savedInstanceState);
-            mMovieAdapter.addMovies(getMovies(savedInstanceState));
         } else {
-            mAction = -1;
+            mRecyclerView.stopLoadingMore();
         }
-    }
-
-    private void setEventBus() {
-        EventBus.getDefault().register(this);
-    }
-
-    private void setRecyclerView(View view) {
-        mMovieAdapter = new MovieAdapter();
-
-        mRecyclerView = (AutofitRecyclerView) view.findViewById(R.id.movie_view);
-        mRecyclerView.setAdapter(mMovieAdapter);
-        mRecyclerView.setOnMoreListener(mOnMoreListener);
     }
 }

@@ -1,80 +1,130 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.design.widget.CoordinatorLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_scrollFlags="scroll|exitUntilCollapsed">
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/backdrop_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/backdrop"
+                android:contentDescription="@string/backdrop"
+                style="@style/backdropDetailsStyle" />
+
+            <View style="@style/imageGradientStyle" />
+
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="-60dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="16dp">
 
-            <FrameLayout
-                android:id="@+id/backdrop_container"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/backdrop_image"
-                    android:contentDescription="@string/backdrop"
-                    style="@style/backdropDetailsStyle"
-                    app:layout_scrollFlags="scroll|enterAlways" />
-
-                <View style="@style/imageGradientStyle" />
-
-            </FrameLayout>
-
-            <LinearLayout style="@style/movieContainerStyle">
-
-                <TextView
-                    android:id="@+id/title_text"
-                    style="@style/titleTextStyle" />
-
-                <TextView
-                    android:id="@+id/release_date_text"
-                    style="@style/releaseDateTextStyle" />
+                    android:id="@+id/poster"
+                    android:contentDescription="@string/poster"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:src="@drawable/poster_placeholder"
+                    android:scaleType="fitXY"
+                    android:adjustViewBounds="true"
+                    android:layout_marginRight="16dp" />
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
+                    android:layout_weight="4"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/content_margin_start"
-                    android:layout_marginTop="@dimen/content_margin_end">
-
-                    <com.vaporwarecorp.popularmovies.widget.MarkView
-                        android:id="@+id/rating_circle"
-                        style="@style/markViewStyle"
-                        app:mv_textSize="@dimen/abc_text_size_title_material" />
+                    android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/rating_text"
-                        style="@style/ratingTextStyle" />
+                        android:id="@+id/title_text"
+                        tools:text="@string/title_text"
+                        style="@style/titleTextStyle" />
+
+                    <TextView
+                        android:id="@+id/release_date_text"
+                        tools:text="@string/release_date_text"
+                        style="@style/releaseDateTextStyle" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/content_margin_start"
+                        android:layout_marginTop="@dimen/content_margin_end">
+
+                        <com.vaporwarecorp.popularmovies.widget.MarkView
+                            android:id="@+id/rating_circle"
+                            style="@style/markViewStyle"
+                            app:mv_textSize="@dimen/abc_text_size_title_material" />
+
+                        <TextView
+                            android:id="@+id/rating_text"
+                            tools:text="from 2775 users"
+                            style="@style/ratingTextStyle" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
-                <TextView
-                    android:text="@string/storyline"
-                    style="@style/overviewTitleStyle" />
-
-                <TextView
-                    android:id="@+id/overview_text"
-                    style="@style/overviewTextStyle" />
-
             </LinearLayout>
+
 
         </LinearLayout>
 
-        <ImageView
-            android:id="@+id/poster_image"
-            android:contentDescription="@string/poster"
-            style="@style/posterDetailsStyle"
-            app:layout_anchor="@id/backdrop_container"
-            app:layout_anchorGravity="bottom|left|start" />
+        <TextView
+            android:text="@string/storyline"
+            style="@style/movieDetailsTitleStyle" />
 
-    </android.support.design.widget.CoordinatorLayout>
+        <TextView
+            android:id="@+id/overview_text"
+            tools:text="@string/overview_text"
+            style="@style/movieDetailsTextStyle" />
+
+        <TextView
+            android:id="@+id/videos_title"
+            android:text="@string/videos"
+            style="@style/movieDetailsTitleStyle" />
+
+        <com.vaporwarecorp.popularmovies.widget.AutofitGridView
+            android:id="@+id/videos_view"
+            android:columnWidth="150dp"
+            android:numColumns="auto_fit"
+            android:stretchMode="columnWidth"
+            android:horizontalSpacing="2dp"
+            android:verticalSpacing="2dp"
+            android:padding="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:text="@string/reviews"
+            style="@style/movieDetailsTitleStyle" />
+
+        <ListView
+            android:id="@+id/reviews_view"
+            android:padding="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
 
 </ScrollView>

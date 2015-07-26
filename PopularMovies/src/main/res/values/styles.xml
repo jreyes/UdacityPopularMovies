@@ -24,9 +24,8 @@
     </style>
 
     <style name="posterDetailsStyle">
-        <item name="android:layout_width">@dimen/image_width</item>
-        <item name="android:layout_height">@dimen/image_height</item>
-        <item name="android:background">@android:drawable/dialog_holo_light_frame</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:scaleType">fitXY</item>
         <item name="android:src">@drawable/poster_placeholder</item>
     </style>
@@ -62,17 +61,27 @@
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="overviewTitleStyle" parent="TextAppearance.AppCompat.Body2">
+    <style name="movieDetailsTitleStyle" parent="TextAppearance.AppCompat.Body2">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginBottom">@dimen/content_margin_end</item>
+        <item name="android:padding">@dimen/padding_standard</item>
         <item name="android:textColor">@color/md_yellow_700</item>
     </style>
 
-    <style name="overviewTextStyle" parent="TextAppearance.AppCompat.Body1">
+    <style name="MovieDetails.SubHead" parent="TextAppearance.AppCompat.Subhead">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_marginBottom">24dp</item>
+    </style>
+
+    <style name="MovieDetails.Text" parent="TextAppearance.AppCompat.Small">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="movieDetailsTextStyle" parent="TextAppearance.AppCompat.Body1">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">@dimen/padding_standard</item>
     </style>
 
     <style name="titleTextStyle" parent="TextAppearance.AppCompat.Display1">

@@ -1,67 +1,107 @@
 package com.vaporwarecorp.popularmovies.util;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.res.Resources;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.*;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.vaporwarecorp.popularmovies.R;
+import com.vaporwarecorp.popularmovies.service.MovieApi;
 import com.vaporwarecorp.popularmovies.widget.MarkView;
+import timber.log.Timber;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ViewUtil {
 // ------------------------------ FIELDS ------------------------------
 
-    @SuppressLint("SimpleDateFormat")
-    private static final DateFormat INPUT_DATE = new SimpleDateFormat("yyyy-MM-dd");
     private static final DateFormat OUTPUT_DATE = SimpleDateFormat.getDateInstance();
 
 // -------------------------- STATIC METHODS --------------------------
 
-    public static String formatDate(String date) {
-        try {
-            return OUTPUT_DATE.format(INPUT_DATE.parse(date));
-        } catch (ParseException e) {
+    public static String formatDate(Date date) {
+        if (date == null) {
             return "";
         }
+        return OUTPUT_DATE.format(date);
     }
 
     public static String formatString(Resources resources, int resourceId, String arg) {
         return String.format(resources.getString(resourceId), arg);
     }
 
-    public static ImageView setImage(Context context, ImageView imageView, int placeholderId, String value) {
+    public static void hide(View view) {
+        view.setVisibility(View.GONE);
+    }
+
+    public static void loadImage(ImageView imageView, int placeholderId, String url) {
         Glide
-                .with(context)
-                .load(value)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .with(imageView.getContext())
+                .load(url)
                 .placeholder(placeholderId)
                 .into(imageView);
-        return imageView;
     }
 
-    public static ImageView setImage(Context context, View view, int resourceId, int placeholderId, String value) {
-        return setImage(context, (ImageView) view.findViewById(resourceId), placeholderId, value);
+    public static void setActionBar(AppCompatActivity activity, boolean displayHomeAsUp) {
+        Toolbar toolbar = (Toolbar) activity.findViewById(R.id.toolbar);
+        activity.setSupportActionBar(toolbar);
+        ActionBar actionBar = activity.getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayShowTitleEnabled(false);
+            actionBar.setDisplayHomeAsUpEnabled(displayHomeAsUp);
+        }
     }
 
-    public static MarkView setMark(View view, int resourceId, float value) {
-        MarkView markView = (MarkView) view.findViewById(resourceId);
-        markView.setMark(value);
-        return markView;
+    public static void setBackdrop(View view, String backdropPath) {
+        if (backdropPath != null) {
+            loadImage((ImageView) view.findViewById(R.id.backdrop), R.drawable.backdrop_placeholder, MovieApi.BACKDROP_PATH + backdropPath);
+        }
     }
 
-    public static TextView setText(View view, int resourceId, String value) {
-        TextView textView = (TextView) view.findViewById(resourceId);
-        textView.setText(value);
-        return textView;
+    public static void setMark(View view, int resourceId, float value) {
+        ((MarkView) view.findViewById(resourceId)).setMark(value);
     }
 
-    public static TextView setText(View view, int resourceId, int stringResourceId, String arg) {
-        return setText(view, resourceId, formatString(view.getResources(), stringResourceId, arg));
+    public static void setPoster(View view, String posterPath) {
+        setPoster((ImageView) view.findViewById(R.id.poster), posterPath);
+    }
+
+    public static void setPoster(ImageView imageView, String posterPath) {
+        if (posterPath != null) {
+            loadImage(imageView, R.drawable.poster_placeholder, MovieApi.POSTER_PATH + posterPath);
+        }
+    }
+
+    public static void setSpinner(AppCompatActivity activity, int arrayResourceId, AdapterView.OnItemSelectedListener onItemSelectedListener) {
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(activity, arrayResourceId, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        Spinner spinner = (Spinner) activity.findViewById(R.id.toolbar_spinner);
+        spinner.setAdapter(adapter);
+        spinner.setOnItemSelectedListener(onItemSelectedListener);
+    }
+
+    public static void setText(View view, int resourceId, String value) {
+        ((TextView) view.findViewById(resourceId)).setText(value);
+    }
+
+    public static void setText(View view, int resourceId, int stringResourceId, String arg) {
+        setText(view, resourceId, formatString(view.getResources(), stringResourceId, arg));
+    }
+
+    public static void setVideo(ImageView imageView, String videoPath) {
+        if (videoPath != null) {
+            String video = String.format(MovieApi.VIDEO_PATH, videoPath);
+            Timber.d("setVideo - " + video);
+            loadImage(imageView, R.drawable.video_placeholder, String.format(MovieApi.VIDEO_PATH, videoPath));
+        }
+    }
+
+    public static void show(View view) {
+        view.setVisibility(View.VISIBLE);
     }
 }

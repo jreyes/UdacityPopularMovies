@@ -49,17 +49,18 @@ public class EndlessRecyclerView extends FrameLayout {
     RecyclerView.OnScrollListener mOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            if (mLoadingMore) {
+                return;
+            }
+
             int visibleItemCount = mLayoutManager.getChildCount();
             int totalItemCount = mLayoutManager.getItemCount();
             int lastVisibleItemPosition = mLayoutManager.findLastVisibleItemPosition();
             if (((totalItemCount - lastVisibleItemPosition) <= itemsLeftToLoadMore() ||
-                    (totalItemCount - lastVisibleItemPosition) == 0 && totalItemCount > visibleItemCount) &&
-                    !mLoadingMore) {
+                    (totalItemCount - lastVisibleItemPosition) == 0 && totalItemCount > visibleItemCount)) {
                 mLoadingMore = true;
-                if (mOnMoreListener != null) {
-                    mProgressWheel.spin();
-                    mOnMoreListener.onMore();
-                }
+                mProgressWheel.spin();
+                mOnMoreListener.onMore();
             }
         }
     };
@@ -105,25 +106,24 @@ public class EndlessRecyclerView extends FrameLayout {
         return mLayoutManager;
     }
 
-    public boolean isLoadingMore() {
-        return mLoadingMore;
-    }
-
     public int itemsLeftToLoadMore() {
         return 3;
     }
 
     public void release() {
-        mRecyclerView.removeItemDecoration(mItemDecoration);
-        mRecyclerView.clearOnScrollListeners();
+        if (mItemDecoration != null) {
+            mRecyclerView.removeItemDecoration(mItemDecoration);
+        }
+        if (mOnMoreListener != null) {
+            mRecyclerView.getAdapter().unregisterAdapterDataObserver(mAdapterDataObserver);
+            mRecyclerView.clearOnScrollListeners();
+            mOnMoreListener = null;
+        }
         mRecyclerView.setAdapter(null);
-
-        mOnMoreListener = null;
     }
 
     public void setAdapter(RecyclerView.Adapter adapter) {
-        mProgressWheel.stopSpinning();
-        adapter.registerAdapterDataObserver(mAdapterDataObserver);
+        stopLoadingMore();
         mRecyclerView.setAdapter(adapter);
     }
 
@@ -133,6 +133,10 @@ public class EndlessRecyclerView extends FrameLayout {
 
     public void setOnMoreListener(OnMoreListener onMoreListener) {
         mOnMoreListener = onMoreListener;
+        if (mOnMoreListener != null) {
+            mRecyclerView.getAdapter().registerAdapterDataObserver(mAdapterDataObserver);
+            mRecyclerView.addOnScrollListener(mOnScrollListener);
+        }
     }
 
     public void stopLoadingMore() {
@@ -148,16 +152,11 @@ public class EndlessRecyclerView extends FrameLayout {
     }
 
     protected void initView() {
-        if (isInEditMode()) {
-            return;
-        }
-
         View view = LayoutInflater.from(getContext()).inflate(R.layout.endless_recyclerview, this);
         mProgressWheel = (ProgressWheel) view.findViewById(android.R.id.progress);
         mRecyclerView = (RecyclerView) view.findViewById(android.R.id.list);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
-        mRecyclerView.addOnScrollListener(mOnScrollListener);
     }
 }

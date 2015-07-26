@@ -72,7 +72,7 @@ public class AutofitRecyclerView extends EndlessRecyclerView {
     @Override
     protected void onMeasure(int widthSpec, int heightSpec) {
         super.onMeasure(widthSpec, heightSpec);
-        if (mColumnWidth > 0 && mSpanCount <= DEFAULT_SPAN_COUNT) {
+        if (mSpanCount < DEFAULT_SPAN_COUNT) {
             mSpanCount = Math.max(1, getMeasuredWidth() / mColumnWidth);
             ((GridLayoutManager) getLayoutManager()).setSpanCount(mSpanCount);
             addItemDecoration(mItemDecoration);
