@@ -85,7 +85,6 @@ public class MovieApi {
 
     public MovieApi(Application application) {
         this.mMovieService = new RestAdapter.Builder()
-                .setLogLevel(RestAdapter.LogLevel.BASIC)
                 .setClient(initOkClient(initCache(application)))
                 .setEndpoint(API_ENDPOINT)
                 .setConverter(gsonConverter())

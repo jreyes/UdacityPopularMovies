@@ -6,18 +6,22 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import com.vaporwarecorp.popularmovies.PopularMoviesApp;
 import com.vaporwarecorp.popularmovies.R;
 import com.vaporwarecorp.popularmovies.adapter.MovieAdapter;
+import com.vaporwarecorp.popularmovies.events.MovieSelectedEvent;
 import com.vaporwarecorp.popularmovies.events.MovieTypeSelectedEvent;
+import com.vaporwarecorp.popularmovies.model.Movie;
 import com.vaporwarecorp.popularmovies.model.MoviePager;
 import com.vaporwarecorp.popularmovies.service.MovieApi;
-import com.vaporwarecorp.popularmovies.widget.AutofitRecyclerView;
+import com.vaporwarecorp.popularmovies.widget.EndlessGridView;
 import de.greenrobot.event.EventBus;
 
 import static com.vaporwarecorp.popularmovies.util.ParcelUtil.*;
 
-public class MoviesFragment extends Fragment {
+public class MoviesFragment extends Fragment
+        implements EndlessGridView.OnMoreListener, AdapterView.OnItemClickListener {
 // ------------------------------ FIELDS ------------------------------
 
     MovieApi.Callback<MoviePager> mCallback = new MovieApi.Callback<MoviePager>() {
@@ -30,7 +34,7 @@ public class MoviesFragment extends Fragment {
         public void success(MoviePager moviePager) {
             mPage = moviePager.page;
             mTotalPages = moviePager.totalPages;
-            mMovieAdapter.addMovies(moviePager.results);
+            mMovieAdapter.addItems(moviePager.results);
         }
     };
 
@@ -38,8 +42,39 @@ public class MoviesFragment extends Fragment {
     private MovieAdapter mMovieAdapter;
     private MovieApi mMovieApi;
     private int mPage;
-    private AutofitRecyclerView mRecyclerView;
+    private EndlessGridView mRecyclerView;
     private int mTotalPages;
+
+// ------------------------ INTERFACE METHODS ------------------------
+
+
+// --------------------- Interface OnItemClickListener ---------------------
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        EventBus.getDefault().post(new MovieSelectedEvent((Movie) parent.getItemAtPosition(position)));
+    }
+
+// --------------------- Interface OnMoreListener ---------------------
+
+    @Override
+    public boolean canLoadMore() {
+        return mPage < mTotalPages;
+    }
+
+    @Override
+    public void onMore() {
+        switch (mAction) {
+            case 0:
+                mMovieApi.getTopRated(mPage + 1, mCallback);
+                break;
+            case 1:
+                mMovieApi.getPopular(mPage + 1, mCallback);
+                break;
+            default:
+                break;
+        }
+    }
 
 // -------------------------- OTHER METHODS --------------------------
 
@@ -73,8 +108,8 @@ public class MoviesFragment extends Fragment {
             mAction = event.type;
             mPage = 0;
             mTotalPages = 1;
-            mMovieAdapter.clearMovies();
-            refreshMovies();
+            mMovieAdapter.clearItems();
+            onMore();
         }
     }
 
@@ -82,20 +117,20 @@ public class MoviesFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         setAction(outState, mAction);
-        setMovies(outState, mMovieAdapter.getMovies());
+        setMovies(outState, mMovieAdapter.getItems());
         setPage(outState, mPage);
         setTotalPages(outState, mTotalPages);
     }
 
     private void initApi(Bundle savedInstanceState) {
         mMovieApi = new MovieApi(getActivity().getApplication());
-        if (savedInstanceState != null) {
+        if (savedInstanceState == null) {
+            mAction = -1;
+        } else {
             mAction = getAction(savedInstanceState);
             mPage = getPage(savedInstanceState);
             mTotalPages = getTotalPages(savedInstanceState);
-            mMovieAdapter.addMovies(getMovies(savedInstanceState));
-        } else {
-            mAction = -1;
+            mMovieAdapter.addItems(getMovies(savedInstanceState));
         }
     }
 
@@ -104,27 +139,11 @@ public class MoviesFragment extends Fragment {
     }
 
     private void initRecyclerView(View view) {
-        mMovieAdapter = new MovieAdapter();
+        mMovieAdapter = new MovieAdapter(getActivity());
 
-        mRecyclerView = (AutofitRecyclerView) view.findViewById(R.id.movie_view);
+        mRecyclerView = (EndlessGridView) view.findViewById(R.id.movie_view);
         mRecyclerView.setAdapter(mMovieAdapter);
-        mRecyclerView.setOnMoreListener(this::refreshMovies);
-    }
-
-    private void refreshMovies() {
-        if (mPage < mTotalPages) {
-            switch (mAction) {
-                case 0:
-                    mMovieApi.getTopRated(mPage + 1, mCallback);
-                    break;
-                case 1:
-                    mMovieApi.getPopular(mPage + 1, mCallback);
-                    break;
-                default:
-                    break;
-            }
-        } else {
-            mRecyclerView.stopLoadingMore();
-        }
+        mRecyclerView.setOnItemClickListener(this);
+        mRecyclerView.setOnMoreListener(this);
     }
 }

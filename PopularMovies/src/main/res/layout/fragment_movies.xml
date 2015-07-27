@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.vaporwarecorp.popularmovies.widget.AutofitRecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.vaporwarecorp.popularmovies.widget.EndlessGridView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/movie_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />

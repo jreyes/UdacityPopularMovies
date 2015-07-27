@@ -10,7 +10,6 @@ import com.bumptech.glide.Glide;
 import com.vaporwarecorp.popularmovies.R;
 import com.vaporwarecorp.popularmovies.service.MovieApi;
 import com.vaporwarecorp.popularmovies.widget.MarkView;
-import timber.log.Timber;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -43,6 +42,7 @@ public class ViewUtil {
                 .with(imageView.getContext())
                 .load(url)
                 .placeholder(placeholderId)
+                .crossFade()
                 .into(imageView);
     }
 
@@ -95,8 +95,6 @@ public class ViewUtil {
 
     public static void setVideo(ImageView imageView, String videoPath) {
         if (videoPath != null) {
-            String video = String.format(MovieApi.VIDEO_PATH, videoPath);
-            Timber.d("setVideo - " + video);
             loadImage(imageView, R.drawable.video_placeholder, String.format(MovieApi.VIDEO_PATH, videoPath));
         }
     }
