@@ -1,6 +1,7 @@
 package com.vaporwarecorp.popularmovies.fragment;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -11,6 +12,8 @@ import android.view.ViewGroup;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
+import com.google.android.youtube.player.YouTubeIntents;
+import com.google.android.youtube.player.YouTubeStandalonePlayer;
 import com.vaporwarecorp.popularmovies.BuildConfig;
 import com.vaporwarecorp.popularmovies.PopularMoviesApp;
 import com.vaporwarecorp.popularmovies.R;
@@ -21,7 +24,6 @@ import com.vaporwarecorp.popularmovies.service.MovieApi;
 
 import java.util.List;
 
-import static com.google.android.youtube.player.YouTubeStandalonePlayer.createVideoIntent;
 import static com.vaporwarecorp.popularmovies.util.ParcelUtil.getMovie;
 import static com.vaporwarecorp.popularmovies.util.ParcelUtil.setMovie;
 import static com.vaporwarecorp.popularmovies.util.ViewUtil.*;
@@ -29,7 +31,7 @@ import static com.vaporwarecorp.popularmovies.util.ViewUtil.*;
 public class MovieDetailsFragment extends Fragment {
 // ------------------------------ FIELDS ------------------------------
 
-    private static final int REQ_START_STANDALONE_PLAYER = 1;
+    private static final String YOUTUBE_PATH = "http://www.youtube.com/watch?v=";
 
     MovieApi.Callback<ReviewPager> mReviewsCallback = new MovieApi.Callback<ReviewPager>() {
         @Override
@@ -81,7 +83,7 @@ public class MovieDetailsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_movie_details, container, false);
-        // fis for Glide loading when the activity is being destroyed
+        // fix for Glide loading when the activity is being destroyed
         if (!getActivity().isDestroyed()) {
             initApi(savedInstanceState);
             initView(rootView);
@@ -93,8 +95,8 @@ public class MovieDetailsFragment extends Fragment {
 
     @Override
     public void onDestroy() {
-        PopularMoviesApp.watch(getActivity());
         super.onDestroy();
+        PopularMoviesApp.watch(getActivity());
     }
 
     @Override
@@ -112,8 +114,8 @@ public class MovieDetailsFragment extends Fragment {
     }
 
     private void initApi(Bundle savedInstanceState) {
+        mMovieApi = PopularMoviesApp.getMovieApi(getActivity());
         mMovie = savedInstanceState != null ? getMovie(savedInstanceState) : getMovie(getArguments());
-        mMovieApi = new MovieApi(getActivity().getApplication());
     }
 
     private void initReviewsView(View view) {
@@ -145,7 +147,7 @@ public class MovieDetailsFragment extends Fragment {
         } else {
             show(mReviewsTitle);
             show(mReviewsView);
-            mReviewsView.setAdapter(new ReviewAdapter(getActivity(), reviews));
+            mReviewsView.setAdapter(new ReviewAdapter(reviews));
         }
     }
 
@@ -156,11 +158,23 @@ public class MovieDetailsFragment extends Fragment {
         } else {
             show(mVideosTitle);
             show(mVideosView);
-            mVideosView.setAdapter(new VideoAdapter(getActivity(), videos));
+            mVideosView.setAdapter(new VideoAdapter(videos));
             mVideosView.setOnItemClickListener((parent, view, position, id) -> {
                 Video video = (Video) parent.getItemAtPosition(position);
-                Intent intent = createVideoIntent(getActivity(), BuildConfig.YOUTUBE_API_KEY, video.key, 0, true, false);
-                startActivityForResult(intent, REQ_START_STANDALONE_PLAYER);
+                Intent intent;
+                if (YouTubeIntents.canResolvePlayVideoIntent(getActivity())) {
+                    intent = YouTubeStandalonePlayer.createVideoIntent(
+                            getActivity(),
+                            BuildConfig.YOUTUBE_API_KEY,
+                            video.key,
+                            0,
+                            true,
+                            false
+                    );
+                } else {
+                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse(YOUTUBE_PATH + video.key));
+                }
+                startActivityForResult(intent, 1);
             });
         }
     }

@@ -1,148 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/backdrop"
-                android:contentDescription="@string/backdrop"
-                style="@style/backdropDetailsStyle" />
-
-            <View style="@style/imageGradientStyle" />
-
-        </FrameLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
-
-            <ImageView
-                android:src="@drawable/backdrop_button"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:adjustViewBounds="true"
-                android:scaleType="fitXY"
-                android:contentDescription="@null" />
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/backdrop"
+                    android:contentDescription="@string/backdrop"
+                    style="@style/backdropDetailsStyle" />
+
+                <View style="@style/imageGradientStyle" />
+
+            </FrameLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingBottom="16dp"
-                android:paddingTop="16dp">
+                android:orientation="vertical">
 
                 <ImageView
-                    android:id="@+id/poster"
-                    android:contentDescription="@string/poster"
-                    android:layout_width="0dp"
+                    android:src="@drawable/backdrop_button"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:src="@drawable/poster_placeholder"
-                    android:scaleType="fitXY"
                     android:adjustViewBounds="true"
-                    android:layout_marginRight="16dp" />
+                    android:scaleType="fitXY"
+                    android:contentDescription="@null" />
 
                 <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_weight="4"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="horizontal"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingBottom="16dp"
+                    android:paddingTop="16dp">
 
-                    <TextView
-                        android:id="@+id/title_text"
-                        tools:text="@string/title_text"
-                        style="@style/titleTextStyle" />
-
-                    <TextView
-                        android:id="@+id/release_date_text"
-                        tools:text="@string/release_date_text"
-                        style="@style/releaseDateTextStyle" />
+                    <ImageView
+                        android:id="@+id/poster"
+                        android:contentDescription="@string/poster"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:src="@drawable/poster_placeholder"
+                        android:scaleType="fitXY"
+                        android:adjustViewBounds="true"
+                        android:layout_marginRight="16dp" />
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
+                        android:layout_weight="4"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/content_margin_start"
-                        android:layout_marginTop="@dimen/content_margin_end">
-
-                        <com.vaporwarecorp.popularmovies.widget.MarkView
-                            android:id="@+id/rating_circle"
-                            style="@style/markViewStyle"
-                            app:mv_textSize="@dimen/abc_text_size_title_material" />
+                        android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/rating_text"
-                            tools:text="from 2775 users"
-                            style="@style/ratingTextStyle" />
+                            android:id="@+id/title_text"
+                            tools:text="@string/title_text"
+                            style="@style/titleTextStyle" />
+
+                        <TextView
+                            android:id="@+id/release_date_text"
+                            tools:text="@string/release_date_text"
+                            style="@style/releaseDateTextStyle" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="@dimen/content_margin_start"
+                            android:layout_marginTop="@dimen/content_margin_end">
+
+                            <com.vaporwarecorp.popularmovies.widget.MarkView
+                                android:id="@+id/rating_circle"
+                                style="@style/markViewStyle"
+                                app:mv_textSize="@dimen/abc_text_size_title_material" />
+
+                            <TextView
+                                android:id="@+id/rating_text"
+                                tools:text="from 2775 users"
+                                style="@style/ratingTextStyle" />
+
+                        </LinearLayout>
 
                     </LinearLayout>
 
                 </LinearLayout>
 
+                <TextView
+                    android:text="@string/storyline"
+                    style="@style/movieDetailsTitleStyle" />
+
+                <TextView
+                    android:id="@+id/overview_text"
+                    tools:text="@string/overview_text"
+                    style="@style/movieDetailsTextStyle" />
+
+                <TextView
+                    android:id="@+id/videos_title"
+                    android:text="@string/videos"
+                    style="@style/movieDetailsTitleStyle" />
+
+                <com.vaporwarecorp.popularmovies.widget.AutofitGridView
+                    android:id="@+id/videos_view"
+                    android:columnWidth="120dp"
+                    android:numColumns="auto_fit"
+                    android:stretchMode="columnWidth"
+                    android:horizontalSpacing="4dp"
+                    android:verticalSpacing="4dp"
+                    android:padding="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:id="@+id/reviews_title"
+                    android:text="@string/reviews"
+                    style="@style/movieDetailsTitleStyle" />
+
+                <com.vaporwarecorp.popularmovies.widget.AutofitListView
+                    android:id="@+id/reviews_view"
+                    android:padding="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
             </LinearLayout>
 
-            <TextView
-                android:text="@string/storyline"
-                style="@style/movieDetailsTitleStyle" />
+        </FrameLayout>
 
-            <TextView
-                android:id="@+id/overview_text"
-                tools:text="@string/overview_text"
-                style="@style/movieDetailsTextStyle" />
+    </ScrollView>
 
-            <TextView
-                android:id="@+id/videos_title"
-                android:text="@string/videos"
-                style="@style/movieDetailsTitleStyle" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/favorite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="28dp"
+        android:src="@android:drawable/btn_star"
+        app:borderWidth="0dp"
+        app:elevation="6dp"
+        app:pressedTranslationZ="12dp" />
 
-            <com.vaporwarecorp.popularmovies.widget.AutofitGridView
-                android:id="@+id/videos_view"
-                android:columnWidth="120dp"
-                android:numColumns="auto_fit"
-                android:stretchMode="columnWidth"
-                android:horizontalSpacing="4dp"
-                android:verticalSpacing="4dp"
-                android:padding="16dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/reviews_title"
-                android:text="@string/reviews"
-                style="@style/movieDetailsTitleStyle" />
-
-            <com.vaporwarecorp.popularmovies.widget.AutofitListView
-                android:id="@+id/reviews_view"
-                android:padding="16dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/favorite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="28dp"
-            android:src="@android:drawable/btn_star"
-            app:borderWidth="0dp"
-            app:elevation="6dp"
-            app:pressedTranslationZ="12dp" />
-
-    </FrameLayout>
-
-
-</ScrollView>
+</android.support.design.widget.CoordinatorLayout>

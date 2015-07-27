@@ -1,6 +1,5 @@
 package com.vaporwarecorp.popularmovies.service;
 
-import android.app.Application;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.GsonBuilder;
 import com.squareup.okhttp.Cache;
@@ -83,9 +82,9 @@ public class MovieApi {
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
-    public MovieApi(Application application) {
+    public MovieApi(File cacheDir) {
         this.mMovieService = new RestAdapter.Builder()
-                .setClient(initOkClient(initCache(application)))
+                .setClient(initOkClient(initCache(cacheDir)))
                 .setEndpoint(API_ENDPOINT)
                 .setConverter(gsonConverter())
                 .setRequestInterceptor(request -> request.addQueryParam("api_key", BuildConfig.MOVIEDB_API_KEY))
@@ -126,9 +125,9 @@ public class MovieApi {
         );
     }
 
-    private Cache initCache(Application application) {
+    private Cache initCache(File cacheDir) {
         try {
-            return new Cache(new File(application.getCacheDir(), "http"), 10 * 1024 * 1024);
+            return new Cache(new File(cacheDir, "http"), 10 * 1024 * 1024);
         } catch (IOException e) {
             return null;
         }

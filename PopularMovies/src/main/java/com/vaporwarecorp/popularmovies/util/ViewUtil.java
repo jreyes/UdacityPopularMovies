@@ -42,7 +42,7 @@ public class ViewUtil {
                 .with(imageView.getContext())
                 .load(url)
                 .placeholder(placeholderId)
-                .crossFade()
+                //.crossFade()
                 .into(imageView);
     }
 

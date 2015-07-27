@@ -51,9 +51,9 @@ public class MoviesActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        PopularMoviesApp.watch(this);
         EventBus.getDefault().unregister(this);
         super.onDestroy();
+        PopularMoviesApp.watch(this);
     }
 
     @Override
@@ -64,7 +64,7 @@ public class MoviesActivity extends AppCompatActivity {
 
     private void displayMovieDetails(Movie movie, boolean clicked) {
         mMovie = movie;
-        if (mTwoPane) {
+        if (mTwoPane && mMovie != null) {
             MovieDetailsFragment.start(this, mMovie);
         } else if (clicked) {
             MovieDetailsActivity.start(this, mMovie);

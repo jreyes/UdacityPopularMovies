@@ -11,9 +11,10 @@
         android:name=".PopularMoviesApp"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:launchMode="singleTask">
-        <activity android:name=".activity.MoviesActivity">
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".activity.MoviesActivity"
+            android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,8 +23,7 @@
         </activity>
         <activity
             android:name=".activity.MovieDetailsActivity"
-            android:parentActivityName=".activity.MoviesActivity"
-            android:launchMode="singleTask">
+            android:parentActivityName=".activity.MoviesActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activity.MoviesActivity" />

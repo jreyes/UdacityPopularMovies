@@ -82,7 +82,6 @@ public class MoviesFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_movies, container, false);
-        initEventBus();
         initRecyclerView(rootView);
         initApi(savedInstanceState);
         return rootView;
@@ -90,13 +89,12 @@ public class MoviesFragment extends Fragment
 
     @Override
     public void onDestroy() {
-        PopularMoviesApp.watch(getActivity());
         super.onDestroy();
+        PopularMoviesApp.watch(getActivity());
     }
 
     @Override
     public void onDestroyView() {
-        EventBus.getDefault().unregister(this);
         mRecyclerView.release();
         mMovieApi.release();
         super.onDestroyView();
@@ -104,13 +102,27 @@ public class MoviesFragment extends Fragment
 
     @SuppressWarnings("unused")
     public void onEvent(MovieTypeSelectedEvent event) {
-        if (event.type != mAction) {
-            mAction = event.type;
-            mPage = 0;
-            mTotalPages = 1;
-            mMovieAdapter.clearItems();
-            onMore();
+        if (event.type == mAction) {
+            return;
         }
+
+        mAction = event.type;
+        mPage = 0;
+        mTotalPages = 1;
+        mMovieAdapter.clearItems();
+        onMore();
+    }
+
+    @Override
+    public void onPause() {
+        EventBus.getDefault().unregister(this);
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        EventBus.getDefault().register(this);
     }
 
     @Override
@@ -123,7 +135,7 @@ public class MoviesFragment extends Fragment
     }
 
     private void initApi(Bundle savedInstanceState) {
-        mMovieApi = new MovieApi(getActivity().getApplication());
+        mMovieApi = PopularMoviesApp.getMovieApi(getActivity());
         if (savedInstanceState == null) {
             mAction = -1;
         } else {
@@ -134,12 +146,8 @@ public class MoviesFragment extends Fragment
         }
     }
 
-    private void initEventBus() {
-        EventBus.getDefault().register(this);
-    }
-
     private void initRecyclerView(View view) {
-        mMovieAdapter = new MovieAdapter(getActivity());
+        mMovieAdapter = new MovieAdapter();
 
         mRecyclerView = (EndlessGridView) view.findViewById(R.id.movie_view);
         mRecyclerView.setAdapter(mMovieAdapter);

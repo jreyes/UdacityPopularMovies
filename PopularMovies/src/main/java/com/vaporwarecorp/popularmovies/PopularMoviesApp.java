@@ -3,19 +3,30 @@ package com.vaporwarecorp.popularmovies;
 import android.app.Application;
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
+import com.vaporwarecorp.popularmovies.service.MovieApi;
 import timber.log.Timber;
 
 public class PopularMoviesApp extends Application {
 // ------------------------------ FIELDS ------------------------------
 
+    private MovieApi mMovieApi;
     private RefWatcher mRefWatcher;
 
 // -------------------------- STATIC METHODS --------------------------
 
+    public static PopularMoviesApp getApplication(@NonNull Context context) {
+        return (PopularMoviesApp) context.getApplicationContext();
+    }
+
+    public static MovieApi getMovieApi(@NonNull Context context) {
+        return getApplication(context).mMovieApi;
+    }
+
     public static void watch(@NonNull Context context) {
-        ((PopularMoviesApp) context.getApplicationContext()).mRefWatcher.watch(context);
+        getApplication(context).mRefWatcher.watch(context);
     }
 
 // -------------------------- OTHER METHODS --------------------------
@@ -25,6 +36,7 @@ public class PopularMoviesApp extends Application {
         super.onCreate();
 
         initLeakCanary();
+        initMovieApi();
         initTimber();
     }
 
@@ -32,7 +44,18 @@ public class PopularMoviesApp extends Application {
         mRefWatcher = LeakCanary.install(this);
     }
 
+    private void initMovieApi() {
+        mMovieApi = new MovieApi(getApplicationContext().getCacheDir());
+    }
+
     private void initTimber() {
-        Timber.plant(new Timber.DebugTree());
+        Timber.plant(BuildConfig.DEBUG ? new Timber.DebugTree() : new Timber.DebugTree() {
+            @Override
+            protected void log(int priority, String tag, String message, Throwable t) {
+                if (priority > Log.WARN) {
+                    Log.e(tag, message, t);
+                }
+            }
+        });
     }
 }

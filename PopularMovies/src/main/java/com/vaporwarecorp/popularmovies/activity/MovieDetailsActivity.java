@@ -44,8 +44,8 @@ public class MovieDetailsActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        PopularMoviesApp.watch(this);
         super.onDestroy();
+        PopularMoviesApp.watch(this);
     }
 
     private void initActionBar() {
