@@ -11,8 +11,8 @@
         android:columnWidth="185dp"
         android:numColumns="auto_fit"
         android:stretchMode="columnWidth"
-        android:horizontalSpacing="2dp"
-        android:verticalSpacing="2dp" />
+        android:horizontalSpacing="4dp"
+        android:verticalSpacing="4dp" />
 
     <com.pnikosis.materialishprogress.ProgressWheel xmlns:wheel="http://schemas.android.com/apk/res-auto"
         android:id="@android:id/progress"
