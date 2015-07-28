@@ -53,7 +53,7 @@ public class MoviesActivity extends AppCompatActivity {
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
         super.onDestroy();
-        PopularMoviesApp.watch(this);
+        PopularMoviesApp.getRefWatcher(this).watch(this);
     }
 
     @Override
@@ -63,8 +63,12 @@ public class MoviesActivity extends AppCompatActivity {
     }
 
     private void displayMovieDetails(Movie movie, boolean clicked) {
+        if (movie == null || (mMovie != null && mMovie.id == movie.id)) {
+            return;
+        }
+
         mMovie = movie;
-        if (mTwoPane && mMovie != null) {
+        if (mTwoPane) {
             MovieDetailsFragment.start(this, mMovie);
         } else if (clicked) {
             MovieDetailsActivity.start(this, mMovie);

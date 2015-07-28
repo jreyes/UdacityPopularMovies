@@ -4,11 +4,11 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,12 +28,32 @@ import static com.vaporwarecorp.popularmovies.util.ParcelUtil.getMovie;
 import static com.vaporwarecorp.popularmovies.util.ParcelUtil.setMovie;
 import static com.vaporwarecorp.popularmovies.util.ViewUtil.*;
 
-public class MovieDetailsFragment extends Fragment {
+public class MovieDetailsFragment extends BaseFragment {
 // ------------------------------ FIELDS ------------------------------
 
     private static final String YOUTUBE_PATH = "http://www.youtube.com/watch?v=";
 
-    MovieApi.Callback<ReviewPager> mReviewsCallback = new MovieApi.Callback<ReviewPager>() {
+    AdapterView.OnItemClickListener mOnItemClickListener = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            Video video = (Video) parent.getItemAtPosition(position);
+            Intent intent;
+            if (YouTubeIntents.canResolvePlayVideoIntent(getActivity())) {
+                intent = YouTubeStandalonePlayer.createVideoIntent(
+                        getActivity(),
+                        BuildConfig.YOUTUBE_API_KEY,
+                        video.key,
+                        0,
+                        true,
+                        false
+                );
+            } else {
+                intent = new Intent(Intent.ACTION_VIEW, Uri.parse(YOUTUBE_PATH + video.key));
+            }
+            startActivityForResult(intent, 1);
+        }
+    };
+    Callback<ReviewPager> mReviewsCallback = new Callback<ReviewPager>() {
         @Override
         public void failure() {
         }
@@ -43,7 +63,7 @@ public class MovieDetailsFragment extends Fragment {
             updateReviewsView(reviewPager.results);
         }
     };
-    MovieApi.Callback<VideoPager> mVideosCallback = new MovieApi.Callback<VideoPager>() {
+    Callback<VideoPager> mVideosCallback = new Callback<VideoPager>() {
         @Override
         public void failure() {
         }
@@ -94,20 +114,6 @@ public class MovieDetailsFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        PopularMoviesApp.watch(getActivity());
-    }
-
-    @Override
-    public void onDestroyView() {
-        if (mMovieApi != null) {
-            mMovieApi.release();
-        }
-        super.onDestroyView();
-    }
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         setMovie(outState, mMovie);
@@ -121,13 +127,13 @@ public class MovieDetailsFragment extends Fragment {
     private void initReviewsView(View view) {
         mReviewsTitle = (TextView) view.findViewById(R.id.reviews_title);
         mReviewsView = (ListView) view.findViewById(R.id.reviews_view);
-        mMovieApi.getReviews(mMovie.id, mReviewsCallback);
+        subscribe(mMovieApi.getReviews(mMovie.id), mReviewsCallback);
     }
 
     private void initVideosView(View view) {
         mVideosTitle = (TextView) view.findViewById(R.id.videos_title);
         mVideosView = (GridView) view.findViewById(R.id.videos_view);
-        mMovieApi.getVideos(mMovie.id, mVideosCallback);
+        subscribe(mMovieApi.getVideos(mMovie.id), mVideosCallback);
     }
 
     private void initView(View view) {
@@ -159,23 +165,7 @@ public class MovieDetailsFragment extends Fragment {
             show(mVideosTitle);
             show(mVideosView);
             mVideosView.setAdapter(new VideoAdapter(videos));
-            mVideosView.setOnItemClickListener((parent, view, position, id) -> {
-                Video video = (Video) parent.getItemAtPosition(position);
-                Intent intent;
-                if (YouTubeIntents.canResolvePlayVideoIntent(getActivity())) {
-                    intent = YouTubeStandalonePlayer.createVideoIntent(
-                            getActivity(),
-                            BuildConfig.YOUTUBE_API_KEY,
-                            video.key,
-                            0,
-                            true,
-                            false
-                    );
-                } else {
-                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse(YOUTUBE_PATH + video.key));
-                }
-                startActivityForResult(intent, 1);
-            });
+            mVideosView.setOnItemClickListener(mOnItemClickListener);
         }
     }
 }

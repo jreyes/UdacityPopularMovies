@@ -2,7 +2,6 @@ package com.vaporwarecorp.popularmovies.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,11 +19,11 @@ import de.greenrobot.event.EventBus;
 
 import static com.vaporwarecorp.popularmovies.util.ParcelUtil.*;
 
-public class MoviesFragment extends Fragment
+public class MoviesFragment extends BaseFragment
         implements EndlessGridView.OnMoreListener, AdapterView.OnItemClickListener {
 // ------------------------------ FIELDS ------------------------------
 
-    MovieApi.Callback<MoviePager> mCallback = new MovieApi.Callback<MoviePager>() {
+    Callback<MoviePager> mCallback = new Callback<MoviePager>() {
         @Override
         public void failure() {
             mRecyclerView.stopLoadingMore();
@@ -66,10 +65,10 @@ public class MoviesFragment extends Fragment
     public void onMore() {
         switch (mAction) {
             case 0:
-                mMovieApi.getTopRated(mPage + 1, mCallback);
+                subscribe(mMovieApi.getTopRated(mPage + 1), mCallback);
                 break;
             case 1:
-                mMovieApi.getPopular(mPage + 1, mCallback);
+                subscribe(mMovieApi.getPopular(mPage + 1), mCallback);
                 break;
             default:
                 break;
@@ -88,15 +87,8 @@ public class MoviesFragment extends Fragment
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        PopularMoviesApp.watch(getActivity());
-    }
-
-    @Override
     public void onDestroyView() {
         mRecyclerView.release();
-        mMovieApi.release();
         super.onDestroyView();
     }
 

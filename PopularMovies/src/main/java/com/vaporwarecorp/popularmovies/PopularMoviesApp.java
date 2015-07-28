@@ -25,8 +25,8 @@ public class PopularMoviesApp extends Application {
         return getApplication(context).mMovieApi;
     }
 
-    public static void watch(@NonNull Context context) {
-        getApplication(context).mRefWatcher.watch(context);
+    public static RefWatcher getRefWatcher(@NonNull Context context) {
+        return getApplication(context).mRefWatcher;
     }
 
 // -------------------------- OTHER METHODS --------------------------

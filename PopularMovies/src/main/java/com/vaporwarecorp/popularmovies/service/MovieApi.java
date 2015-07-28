@@ -8,6 +8,7 @@ import com.vaporwarecorp.popularmovies.BuildConfig;
 import com.vaporwarecorp.popularmovies.model.MoviePager;
 import com.vaporwarecorp.popularmovies.model.ReviewPager;
 import com.vaporwarecorp.popularmovies.model.VideoPager;
+import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
 import retrofit.client.OkClient;
 import retrofit.converter.GsonConverter;
@@ -15,10 +16,6 @@ import retrofit.http.GET;
 import retrofit.http.Path;
 import retrofit.http.Query;
 import rx.Observable;
-import rx.Observer;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-import rx.subscriptions.CompositeSubscription;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,16 +30,9 @@ public class MovieApi {
     public static final String POSTER_PATH = "http://image.tmdb.org/t/p/w185";
     public static final String VIDEO_PATH = "http://i.ytimg.com/vi/%s/default.jpg";
 
-    private CompositeSubscription mCompositeSubscription;
     private MovieService mMovieService;
 
 // -------------------------- INNER CLASSES --------------------------
-
-    public interface Callback<T> {
-        void failure();
-
-        void success(T value);
-    }
 
     public interface MovieService {
         @GET("/movie/popular")
@@ -58,25 +48,10 @@ public class MovieApi {
         Observable<VideoPager> getVideos(@Path("id") int movieId);
     }
 
-    public class MovieObserver<T> implements Observer<T> {
-        Callback<T> mCallback;
-
-        public MovieObserver(Callback<T> callback) {
-            mCallback = callback;
-        }
-
+    public class AuthenticatorRequestInterceptor implements RequestInterceptor {
         @Override
-        public void onCompleted() {
-        }
-
-        @Override
-        public void onError(Throwable e) {
-            mCallback.failure();
-        }
-
-        @Override
-        public void onNext(T t) {
-            mCallback.success(t);
+        public void intercept(RequestFacade request) {
+            request.addQueryParam("api_key", BuildConfig.MOVIEDB_API_KEY);
         }
     }
 
@@ -87,32 +62,27 @@ public class MovieApi {
                 .setClient(initOkClient(initCache(cacheDir)))
                 .setEndpoint(API_ENDPOINT)
                 .setConverter(gsonConverter())
-                .setRequestInterceptor(request -> request.addQueryParam("api_key", BuildConfig.MOVIEDB_API_KEY))
+                .setRequestInterceptor(new AuthenticatorRequestInterceptor())
                 .build()
                 .create(MovieService.class);
-        this.mCompositeSubscription = new CompositeSubscription();
     }
 
 // -------------------------- OTHER METHODS --------------------------
 
-    public void getPopular(int page, Callback<MoviePager> callback) {
-        subscribe(mMovieService.getPopular(page), callback);
+    public Observable<MoviePager> getPopular(int page) {
+        return mMovieService.getPopular(page);
     }
 
-    public void getReviews(int movieId, Callback<ReviewPager> callback) {
-        subscribe(mMovieService.getReviews(movieId), callback);
+    public Observable<ReviewPager> getReviews(int movieId) {
+        return mMovieService.getReviews(movieId);
     }
 
-    public void getTopRated(int page, Callback<MoviePager> callback) {
-        subscribe(mMovieService.getTopRated(page), callback);
+    public Observable<MoviePager> getTopRated(int page) {
+        return mMovieService.getTopRated(page);
     }
 
-    public void getVideos(int movieId, Callback<VideoPager> callback) {
-        subscribe(mMovieService.getVideos(movieId), callback);
-    }
-
-    public void release() {
-        mCompositeSubscription.unsubscribe();
+    public Observable<VideoPager> getVideos(int movieId) {
+        return mMovieService.getVideos(movieId);
     }
 
     private GsonConverter gsonConverter() {
@@ -140,14 +110,5 @@ public class MovieApi {
         client.setReadTimeout(10, SECONDS);
         client.setWriteTimeout(10, SECONDS);
         return new OkClient(client);
-    }
-
-    private <T> void subscribe(Observable<T> observable, Callback<T> callback) {
-        mCompositeSubscription.add(
-                observable
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new MovieObserver<>(callback))
-        );
     }
 }

@@ -47,6 +47,6 @@ public abstract class BaseAdapter<T> extends android.widget.BaseAdapter {
     }
 
     public ArrayList<T> getItems() {
-        return new ArrayList<>(mItems);
+        return new ArrayList<T>(mItems);
     }
 }

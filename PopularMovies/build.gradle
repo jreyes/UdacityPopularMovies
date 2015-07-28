@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'me.tatarka.retrolambda'
 
 android {
   compileSdkVersion 22
@@ -21,8 +20,8 @@ android {
   }
 
   compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
+    sourceCompatibility JavaVersion.VERSION_1_6
+    targetCompatibility JavaVersion.VERSION_1_6
   }
   buildTypes {
     release {
@@ -66,11 +65,4 @@ dependencies {
   // LeakCanary
   debugCompile "com.squareup.leakcanary:leakcanary-android:${leakCanaryVersion}"
   releaseCompile "com.squareup.leakcanary:leakcanary-android-no-op:${leakCanaryVersion}"
-}
-
-retrolambda {
-  jdk System.getenv("JAVA8_HOME")
-  oldJdk System.getenv("JAVA6_HOME")
-  defaultMethods false
-  incremental true
 }
