@@ -15,15 +15,17 @@ import android.widget.TextView;
 import com.google.android.youtube.player.YouTubeIntents;
 import com.google.android.youtube.player.YouTubeStandalonePlayer;
 import com.vaporwarecorp.popularmovies.BuildConfig;
-import com.vaporwarecorp.popularmovies.PopularMoviesApp;
 import com.vaporwarecorp.popularmovies.R;
 import com.vaporwarecorp.popularmovies.adapter.ReviewAdapter;
 import com.vaporwarecorp.popularmovies.adapter.VideoAdapter;
 import com.vaporwarecorp.popularmovies.model.Movie;
 import com.vaporwarecorp.popularmovies.model.MovieDetail;
+import com.vaporwarecorp.popularmovies.model.Review;
 import com.vaporwarecorp.popularmovies.model.Video;
-import com.vaporwarecorp.popularmovies.service.MovieApi;
 
+import java.util.List;
+
+import static com.vaporwarecorp.popularmovies.PopularMoviesApp.getMovieApi;
 import static com.vaporwarecorp.popularmovies.util.ParcelUtil.*;
 import static com.vaporwarecorp.popularmovies.util.ViewUtil.*;
 
@@ -39,7 +41,7 @@ public class MovieDetailsFragment extends BaseFragment {
 
         @Override
         public void success(MovieDetail movieDetail) {
-            updateMovieDetail(movieDetail);
+            updateMovieDetail(movieDetail.getVideos(), movieDetail.getReviews());
         }
     };
     AdapterView.OnItemClickListener mOnItemClickListener = new AdapterView.OnItemClickListener() {
@@ -64,9 +66,10 @@ public class MovieDetailsFragment extends BaseFragment {
     };
 
     private Movie mMovie;
-    private MovieApi mMovieApi;
+    private ReviewAdapter mReviewAdapter;
     private TextView mReviewsTitle;
     private ListView mReviewsView;
+    private VideoAdapter mVideoAdapter;
     private TextView mVideosTitle;
     private GridView mVideosView;
 
@@ -96,6 +99,7 @@ public class MovieDetailsFragment extends BaseFragment {
         if (!getActivity().isDestroyed()) {
             initApi(savedInstanceState);
             initView(rootView);
+            initContent(savedInstanceState);
         }
         return rootView;
     }
@@ -104,11 +108,20 @@ public class MovieDetailsFragment extends BaseFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         setMovie(outState, mMovie);
+        setVideos(outState, mVideoAdapter.getItems());
+        setReviews(outState, mReviewAdapter.getItems());
     }
 
     private void initApi(Bundle savedInstanceState) {
-        mMovieApi = PopularMoviesApp.getMovieApi(getActivity());
         mMovie = savedInstanceState != null ? getMovie(savedInstanceState) : getMovie(getArguments());
+    }
+
+    private void initContent(Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            subscribe(getMovieApi(getActivity()).getMovieDetail(mMovie.getId()), mMovieDetailCallback);
+        } else {
+            updateMovieDetail(getVideos(savedInstanceState), getReviews(savedInstanceState));
+        }
     }
 
     private void initView(View view) {
@@ -124,21 +137,21 @@ public class MovieDetailsFragment extends BaseFragment {
         mReviewsView = (ListView) view.findViewById(R.id.reviews_view);
         mVideosTitle = (TextView) view.findViewById(R.id.videos_title);
         mVideosView = (GridView) view.findViewById(R.id.videos_view);
-
-        subscribe(mMovieApi.getMovieDetail(mMovie.getId()), mMovieDetailCallback);
     }
 
-    private void updateMovieDetail(MovieDetail movieDetail) {
-        if (!movieDetail.getReviews().isEmpty()) {
-            show(mReviewsTitle);
-            show(mReviewsView);
-            mReviewsView.setAdapter(new ReviewAdapter(movieDetail.getReviews()));
-        }
-        if (!movieDetail.getVideos().isEmpty()) {
+    private void updateMovieDetail(List<Video> videos, List<Review> reviews) {
+        if (!videos.isEmpty()) {
             show(mVideosTitle);
             show(mVideosView);
-            mVideosView.setAdapter(new VideoAdapter(movieDetail.getVideos()));
+            mVideoAdapter = new VideoAdapter(videos);
+            mVideosView.setAdapter(mVideoAdapter);
             mVideosView.setOnItemClickListener(mOnItemClickListener);
+        }
+        if (!reviews.isEmpty()) {
+            show(mReviewsTitle);
+            show(mReviewsView);
+            mReviewAdapter = new ReviewAdapter(reviews);
+            mReviewsView.setAdapter(mReviewAdapter);
         }
     }
 }

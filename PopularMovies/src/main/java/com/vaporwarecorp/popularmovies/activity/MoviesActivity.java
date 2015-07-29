@@ -63,16 +63,15 @@ public class MoviesActivity extends AppCompatActivity {
     }
 
     private void displayMovieDetails(Movie movie, boolean clicked) {
-        if (movie == null || (mMovie != null && mMovie.getId() == movie.getId())) {
+        if (movie == null) {
             return;
         }
-
-        mMovie = movie;
-        if (mTwoPane) {
-            MovieDetailsFragment.start(this, mMovie);
+        if (mTwoPane && (mMovie == null || mMovie.getId() != movie.getId())) {
+            MovieDetailsFragment.start(this, movie);
         } else if (clicked) {
-            MovieDetailsActivity.start(this, mMovie);
+            MovieDetailsActivity.start(this, movie);
         }
+        mMovie = movie;
     }
 
     private void initActionBar() {
