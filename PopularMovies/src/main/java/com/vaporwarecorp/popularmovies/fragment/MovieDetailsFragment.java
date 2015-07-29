@@ -24,8 +24,7 @@ import com.vaporwarecorp.popularmovies.model.MovieDetail;
 import com.vaporwarecorp.popularmovies.model.Video;
 import com.vaporwarecorp.popularmovies.service.MovieApi;
 
-import static com.vaporwarecorp.popularmovies.util.ParcelUtil.getMovie;
-import static com.vaporwarecorp.popularmovies.util.ParcelUtil.setMovie;
+import static com.vaporwarecorp.popularmovies.util.ParcelUtil.*;
 import static com.vaporwarecorp.popularmovies.util.ViewUtil.*;
 
 public class MovieDetailsFragment extends BaseFragment {

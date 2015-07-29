@@ -37,7 +37,7 @@ public class MoviesActivity extends AppCompatActivity {
 
     @SuppressWarnings("unused")
     public void onEvent(MovieSelectedEvent event) {
-        displayMovieDetails(event.movie, true);
+        displayMovieDetails(event.movie, event.clicked);
     }
 
     @Override

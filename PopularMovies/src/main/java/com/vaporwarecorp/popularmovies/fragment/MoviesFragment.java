@@ -35,7 +35,7 @@ public class MoviesFragment extends BaseFragment
             mTotalPages = moviePager.totalPages;
             mMovieAdapter.addItems(moviePager.results);
             if (mPage == 1 && !moviePager.results.isEmpty()) {
-                postMovieSelected(moviePager.results.get(0));
+                postMovieSelected(moviePager.results.get(0), false);
             }
         }
     };
@@ -54,7 +54,7 @@ public class MoviesFragment extends BaseFragment
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        postMovieSelected((Movie) parent.getItemAtPosition(position));
+        postMovieSelected((Movie) parent.getItemAtPosition(position), true);
     }
 
 // --------------------- Interface OnMoreListener ---------------------
@@ -149,7 +149,7 @@ public class MoviesFragment extends BaseFragment
         mRecyclerView.setOnMoreListener(this);
     }
 
-    private void postMovieSelected(Movie movie) {
-        EventBus.getDefault().post(new MovieSelectedEvent(movie));
+    private void postMovieSelected(Movie movie, boolean clicked) {
+        EventBus.getDefault().post(new MovieSelectedEvent(movie, clicked));
     }
 }
