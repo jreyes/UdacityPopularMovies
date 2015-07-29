@@ -28,7 +28,7 @@ public class MovieAdapter extends BaseAdapter<Movie> {
         if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.movie_list_item, parent, false);
         }
-        setPoster((ImageView) convertView, getItem(position).posterPath);
+        setPoster((ImageView) convertView, getItem(position).getPosterPath());
         return convertView;
     }
 }

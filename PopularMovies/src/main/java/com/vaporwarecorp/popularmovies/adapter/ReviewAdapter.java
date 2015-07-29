@@ -44,8 +44,8 @@ public class ReviewAdapter extends BaseAdapter<Review> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         Review review = getItem(position);
-        viewHolder.author.setText(review.author);
-        viewHolder.content.setText(review.content);
+        viewHolder.author.setText(review.getAuthor());
+        viewHolder.content.setText(review.getContent());
         return convertView;
     }
 }

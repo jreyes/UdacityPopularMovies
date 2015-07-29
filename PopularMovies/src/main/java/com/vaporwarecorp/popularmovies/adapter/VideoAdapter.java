@@ -28,7 +28,7 @@ public class VideoAdapter extends BaseAdapter<Video> {
         if (convertView == null) {
             convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.video_list_item, parent, false);
         }
-        setVideo((ImageView) convertView, getItem(position).key);
+        setVideo((ImageView) convertView, getItem(position).getKey());
         return convertView;
     }
 }

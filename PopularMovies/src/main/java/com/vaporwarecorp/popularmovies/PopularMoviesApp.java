@@ -29,6 +29,17 @@ public class PopularMoviesApp extends Application {
         return getApplication(context).mRefWatcher;
     }
 
+// -------------------------- INNER CLASSES --------------------------
+
+    private static class CrashReportingTree extends Timber.Tree {
+        @Override
+        protected void log(int priority, String tag, String message, Throwable t) {
+            if (priority > Log.WARN) {
+                Log.e(tag, message, t);
+            }
+        }
+    }
+
 // -------------------------- OTHER METHODS --------------------------
 
     @Override
@@ -49,13 +60,6 @@ public class PopularMoviesApp extends Application {
     }
 
     private void initTimber() {
-        Timber.plant(BuildConfig.DEBUG ? new Timber.DebugTree() : new Timber.DebugTree() {
-            @Override
-            protected void log(int priority, String tag, String message, Throwable t) {
-                if (priority > Log.WARN) {
-                    Log.e(tag, message, t);
-                }
-            }
-        });
+        Timber.plant(BuildConfig.DEBUG ? new Timber.DebugTree() : new CrashReportingTree());
     }
 }

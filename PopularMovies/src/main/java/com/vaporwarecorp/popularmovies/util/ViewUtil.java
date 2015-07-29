@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.*;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.vaporwarecorp.popularmovies.R;
 import com.vaporwarecorp.popularmovies.service.MovieApi;
 import com.vaporwarecorp.popularmovies.widget.MarkView;
@@ -41,8 +42,8 @@ public class ViewUtil {
         Glide
                 .with(imageView.getContext())
                 .load(url)
+                .diskCacheStrategy(DiskCacheStrategy.RESULT)
                 .placeholder(placeholderId)
-                //.crossFade()
                 .into(imageView);
     }
 

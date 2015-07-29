@@ -8,6 +8,7 @@ import rx.Observable;
 import rx.Observer;
 import rx.android.app.AppObservable;
 import rx.subscriptions.CompositeSubscription;
+import timber.log.Timber;
 
 public abstract class BaseFragment extends Fragment {
 // ------------------------------ FIELDS ------------------------------
@@ -51,6 +52,7 @@ public abstract class BaseFragment extends Fragment {
 
                     @Override
                     public void onError(Throwable e) {
+                        Timber.e(e, "error on observable");
                         callback.failure();
                     }
 

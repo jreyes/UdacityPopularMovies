@@ -2,9 +2,12 @@ package com.vaporwarecorp.popularmovies.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import com.pushtorefresh.storio.sqlite.annotations.StorIOSQLiteColumn;
+import com.pushtorefresh.storio.sqlite.annotations.StorIOSQLiteType;
 
 import java.util.Date;
 
+@StorIOSQLiteType(table = "movies")
 public class Movie implements Parcelable {
 // ------------------------------ FIELDS ------------------------------
 
@@ -18,46 +21,75 @@ public class Movie implements Parcelable {
         }
     };
 
-    public final String backdropPath;
-    public final int id;
-    public final String originalTitle;
-    public final String overview;
-    public final String posterPath;
-    public final Date releaseDate;
-    public final float voteAverage;
-    public final String voteCount;
+    @StorIOSQLiteColumn(name = "backdrop_path")
+    String backdropPath;
+    @StorIOSQLiteColumn(name = "id", key = true)
+    int id;
+    @StorIOSQLiteColumn(name = "original_title")
+    String originalTitle;
+    @StorIOSQLiteColumn(name = "overview")
+    String overview;
+    @StorIOSQLiteColumn(name = "poster_path")
+    String posterPath;
+    Date releaseDate;
+    @StorIOSQLiteColumn(name = "release_date")
+    Long releaseDateTime;
+    @StorIOSQLiteColumn(name = "vote_average")
+    float voteAverage;
+    @StorIOSQLiteColumn(name = "vote_count")
+    String voteCount;
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
-    protected Movie(Parcel in) {
-        this(
-                in.readString(),
-                in.readInt(),
-                in.readString(),
-                in.readString(),
-                in.readString(),
-                new Date(in.readLong()),
-                in.readFloat(),
-                in.readString()
-        );
+    Movie() {
     }
 
-    public Movie(String backdropPath,
-                 int id,
-                 String originalTitle,
-                 String overview,
-                 String posterPath,
-                 Date releaseDate,
-                 float voteAverage,
-                 String voteCount) {
-        this.backdropPath = backdropPath;
-        this.id = id;
-        this.originalTitle = originalTitle;
-        this.overview = overview;
-        this.posterPath = posterPath;
-        this.releaseDate = releaseDate;
-        this.voteAverage = voteAverage;
-        this.voteCount = voteCount;
+    protected Movie(Parcel in) {
+        this.backdropPath = in.readString();
+        this.id = in.readInt();
+        this.originalTitle = in.readString();
+        this.overview = in.readString();
+        this.posterPath = in.readString();
+        this.releaseDate = new Date(in.readLong());
+        this.voteAverage = in.readFloat();
+        this.voteCount = in.readString();
+    }
+
+// --------------------- GETTER / SETTER METHODS ---------------------
+
+    public String getBackdropPath() {
+        return backdropPath;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getOriginalTitle() {
+        return originalTitle;
+    }
+
+    public String getOverview() {
+        return overview;
+    }
+
+    public String getPosterPath() {
+        return posterPath;
+    }
+
+    public Date getReleaseDate() {
+        if (releaseDate == null) {
+            return new Date(releaseDateTime);
+        }
+        return releaseDate;
+    }
+
+    public float getVoteAverage() {
+        return voteAverage;
+    }
+
+    public String getVoteCount() {
+        return voteCount;
     }
 
 // ------------------------ CANONICAL METHODS ------------------------
@@ -93,7 +125,7 @@ public class Movie implements Parcelable {
         dest.writeString(originalTitle);
         dest.writeString(overview);
         dest.writeString(posterPath);
-        dest.writeLong(releaseDate.getTime());
+        dest.writeLong(getReleaseDate().getTime());
         dest.writeFloat(voteAverage);
         dest.writeString(voteCount);
     }

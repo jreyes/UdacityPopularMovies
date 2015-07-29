@@ -19,10 +19,10 @@ import com.vaporwarecorp.popularmovies.PopularMoviesApp;
 import com.vaporwarecorp.popularmovies.R;
 import com.vaporwarecorp.popularmovies.adapter.ReviewAdapter;
 import com.vaporwarecorp.popularmovies.adapter.VideoAdapter;
-import com.vaporwarecorp.popularmovies.model.*;
+import com.vaporwarecorp.popularmovies.model.Movie;
+import com.vaporwarecorp.popularmovies.model.MovieDetail;
+import com.vaporwarecorp.popularmovies.model.Video;
 import com.vaporwarecorp.popularmovies.service.MovieApi;
-
-import java.util.List;
 
 import static com.vaporwarecorp.popularmovies.util.ParcelUtil.getMovie;
 import static com.vaporwarecorp.popularmovies.util.ParcelUtil.setMovie;
@@ -33,6 +33,16 @@ public class MovieDetailsFragment extends BaseFragment {
 
     private static final String YOUTUBE_PATH = "http://www.youtube.com/watch?v=";
 
+    Callback<MovieDetail> mMovieDetailCallback = new Callback<MovieDetail>() {
+        @Override
+        public void failure() {
+        }
+
+        @Override
+        public void success(MovieDetail movieDetail) {
+            updateMovieDetail(movieDetail);
+        }
+    };
     AdapterView.OnItemClickListener mOnItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -42,35 +52,15 @@ public class MovieDetailsFragment extends BaseFragment {
                 intent = YouTubeStandalonePlayer.createVideoIntent(
                         getActivity(),
                         BuildConfig.YOUTUBE_API_KEY,
-                        video.key,
+                        video.getKey(),
                         0,
                         true,
                         false
                 );
             } else {
-                intent = new Intent(Intent.ACTION_VIEW, Uri.parse(YOUTUBE_PATH + video.key));
+                intent = new Intent(Intent.ACTION_VIEW, Uri.parse(YOUTUBE_PATH + video.getKey()));
             }
             startActivityForResult(intent, 1);
-        }
-    };
-    Callback<ReviewPager> mReviewsCallback = new Callback<ReviewPager>() {
-        @Override
-        public void failure() {
-        }
-
-        @Override
-        public void success(ReviewPager reviewPager) {
-            updateReviewsView(reviewPager.results);
-        }
-    };
-    Callback<VideoPager> mVideosCallback = new Callback<VideoPager>() {
-        @Override
-        public void failure() {
-        }
-
-        @Override
-        public void success(VideoPager videoPager) {
-            updateVideosView(videoPager.results);
         }
     };
 
@@ -107,8 +97,6 @@ public class MovieDetailsFragment extends BaseFragment {
         if (!getActivity().isDestroyed()) {
             initApi(savedInstanceState);
             initView(rootView);
-            initVideosView(rootView);
-            initReviewsView(rootView);
         }
         return rootView;
     }
@@ -124,47 +112,33 @@ public class MovieDetailsFragment extends BaseFragment {
         mMovie = savedInstanceState != null ? getMovie(savedInstanceState) : getMovie(getArguments());
     }
 
-    private void initReviewsView(View view) {
+    private void initView(View view) {
+        setText(view, R.id.title_text, mMovie.getOriginalTitle());
+        setText(view, R.id.release_date_text, formatDate(mMovie.getReleaseDate()));
+        setMark(view, R.id.rating_circle, mMovie.getVoteAverage());
+        setText(view, R.id.rating_text, R.string.vote_count, mMovie.getVoteCount());
+        setText(view, R.id.overview_text, mMovie.getOverview());
+        setBackdrop(view, mMovie.getBackdropPath());
+        setPoster(view, mMovie.getPosterPath());
+
         mReviewsTitle = (TextView) view.findViewById(R.id.reviews_title);
         mReviewsView = (ListView) view.findViewById(R.id.reviews_view);
-        subscribe(mMovieApi.getReviews(mMovie.id), mReviewsCallback);
-    }
-
-    private void initVideosView(View view) {
         mVideosTitle = (TextView) view.findViewById(R.id.videos_title);
         mVideosView = (GridView) view.findViewById(R.id.videos_view);
-        subscribe(mMovieApi.getVideos(mMovie.id), mVideosCallback);
+
+        subscribe(mMovieApi.getMovieDetail(mMovie.getId()), mMovieDetailCallback);
     }
 
-    private void initView(View view) {
-        setText(view, R.id.title_text, mMovie.originalTitle);
-        setText(view, R.id.release_date_text, formatDate(mMovie.releaseDate));
-        setMark(view, R.id.rating_circle, mMovie.voteAverage);
-        setText(view, R.id.rating_text, R.string.vote_count, mMovie.voteCount);
-        setText(view, R.id.overview_text, mMovie.overview);
-        setBackdrop(view, mMovie.backdropPath);
-        setPoster(view, mMovie.posterPath);
-    }
-
-    private void updateReviewsView(List<Review> reviews) {
-        if (reviews.isEmpty()) {
-            hide(mReviewsTitle);
-            hide(mReviewsView);
-        } else {
+    private void updateMovieDetail(MovieDetail movieDetail) {
+        if (!movieDetail.getReviews().isEmpty()) {
             show(mReviewsTitle);
             show(mReviewsView);
-            mReviewsView.setAdapter(new ReviewAdapter(reviews));
+            mReviewsView.setAdapter(new ReviewAdapter(movieDetail.getReviews()));
         }
-    }
-
-    private void updateVideosView(List<Video> videos) {
-        if (videos.isEmpty()) {
-            hide(mVideosTitle);
-            hide(mVideosView);
-        } else {
+        if (!movieDetail.getVideos().isEmpty()) {
             show(mVideosTitle);
             show(mVideosView);
-            mVideosView.setAdapter(new VideoAdapter(videos));
+            mVideosView.setAdapter(new VideoAdapter(movieDetail.getVideos()));
             mVideosView.setOnItemClickListener(mOnItemClickListener);
         }
     }

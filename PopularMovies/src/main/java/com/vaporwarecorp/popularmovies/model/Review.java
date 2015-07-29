@@ -2,7 +2,11 @@ package com.vaporwarecorp.popularmovies.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
+import com.pushtorefresh.storio.sqlite.annotations.StorIOSQLiteColumn;
+import com.pushtorefresh.storio.sqlite.annotations.StorIOSQLiteType;
 
+@StorIOSQLiteType(table = "reviews")
 public class Review implements Parcelable {
 // ------------------------------ FIELDS ------------------------------
 
@@ -16,20 +20,57 @@ public class Review implements Parcelable {
         }
     };
 
-    public String author;
-    public String content;
-    public String id;
+    @StorIOSQLiteColumn(name = "author")
+    String author;
+    @StorIOSQLiteColumn(name = "content")
+    String content;
+    @StorIOSQLiteColumn(name = "id", key = true)
+    String id;
+    @StorIOSQLiteColumn(name = "movie_id")
+    int movieId;
+
+// -------------------------- STATIC METHODS --------------------------
+
+    public static Review newInstance(String id, String author, String content, int movieId) {
+        Review review = new Review();
+        review.id = id;
+        review.author = author;
+        review.content = content;
+        review.movieId = movieId;
+        return review;
+    }
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
-    protected Review(Parcel in) {
-        this(in.readString(), in.readString(), in.readString());
+    Review() {
     }
 
-    public Review(String author, String content, String id) {
-        this.author = author;
-        this.content = content;
-        this.id = id;
+    protected Review(Parcel in) {
+        this.author = in.readString();
+        this.content = in.readString();
+        this.id = in.readString();
+        this.movieId = in.readInt();
+    }
+
+// --------------------- GETTER / SETTER METHODS ---------------------
+
+    @NonNull
+    public String getAuthor() {
+        return author;
+    }
+
+    @NonNull
+    public String getContent() {
+        return content;
+    }
+
+    @NonNull
+    public String getId() {
+        return id;
+    }
+
+    public int getMovieId() {
+        return movieId;
     }
 
 // ------------------------ CANONICAL METHODS ------------------------
@@ -40,6 +81,7 @@ public class Review implements Parcelable {
                 "author='" + author + '\'' +
                 ", content='" + content + '\'' +
                 ", id='" + id + '\'' +
+                ", movieId='" + movieId + '\'' +
                 '}';
     }
 
@@ -58,5 +100,6 @@ public class Review implements Parcelable {
         dest.writeString(this.author);
         dest.writeString(this.content);
         dest.writeString(this.id);
+        dest.writeInt(this.movieId);
     }
 }

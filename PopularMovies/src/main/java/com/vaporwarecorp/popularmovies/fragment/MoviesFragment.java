@@ -34,15 +34,18 @@ public class MoviesFragment extends BaseFragment
             mPage = moviePager.page;
             mTotalPages = moviePager.totalPages;
             mMovieAdapter.addItems(moviePager.results);
+            if (mPage == 1 && !moviePager.results.isEmpty()) {
+                postMovieSelected(moviePager.results.get(0));
+            }
         }
     };
 
-    private int mAction;
     private MovieAdapter mMovieAdapter;
     private MovieApi mMovieApi;
     private int mPage;
     private EndlessGridView mRecyclerView;
     private int mTotalPages;
+    private int mViewType;
 
 // ------------------------ INTERFACE METHODS ------------------------
 
@@ -51,7 +54,7 @@ public class MoviesFragment extends BaseFragment
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        EventBus.getDefault().post(new MovieSelectedEvent((Movie) parent.getItemAtPosition(position)));
+        postMovieSelected((Movie) parent.getItemAtPosition(position));
     }
 
 // --------------------- Interface OnMoreListener ---------------------
@@ -63,7 +66,7 @@ public class MoviesFragment extends BaseFragment
 
     @Override
     public void onMore() {
-        switch (mAction) {
+        switch (mViewType) {
             case 0:
                 subscribe(mMovieApi.getTopRated(mPage + 1), mCallback);
                 break;
@@ -71,7 +74,7 @@ public class MoviesFragment extends BaseFragment
                 subscribe(mMovieApi.getPopular(mPage + 1), mCallback);
                 break;
             default:
-                break;
+                throw new IllegalArgumentException("Unknown view type: " + mViewType);
         }
     }
 
@@ -94,15 +97,14 @@ public class MoviesFragment extends BaseFragment
 
     @SuppressWarnings("unused")
     public void onEvent(MovieTypeSelectedEvent event) {
-        if (event.type == mAction) {
+        if (event.type == mViewType) {
             return;
         }
 
-        mAction = event.type;
+        mViewType = event.type;
         mPage = 0;
         mTotalPages = 1;
         mMovieAdapter.clearItems();
-        onMore();
     }
 
     @Override
@@ -120,7 +122,7 @@ public class MoviesFragment extends BaseFragment
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        setAction(outState, mAction);
+        setEventType(outState, mViewType);
         setMovies(outState, mMovieAdapter.getItems());
         setPage(outState, mPage);
         setTotalPages(outState, mTotalPages);
@@ -129,9 +131,9 @@ public class MoviesFragment extends BaseFragment
     private void initApi(Bundle savedInstanceState) {
         mMovieApi = PopularMoviesApp.getMovieApi(getActivity());
         if (savedInstanceState == null) {
-            mAction = -1;
+            mViewType = -1;
         } else {
-            mAction = getAction(savedInstanceState);
+            mViewType = getEventType(savedInstanceState);
             mPage = getPage(savedInstanceState);
             mTotalPages = getTotalPages(savedInstanceState);
             mMovieAdapter.addItems(getMovies(savedInstanceState));
@@ -145,5 +147,9 @@ public class MoviesFragment extends BaseFragment
         mRecyclerView.setAdapter(mMovieAdapter);
         mRecyclerView.setOnItemClickListener(this);
         mRecyclerView.setOnMoreListener(this);
+    }
+
+    private void postMovieSelected(Movie movie) {
+        EventBus.getDefault().post(new MovieSelectedEvent(movie));
     }
 }

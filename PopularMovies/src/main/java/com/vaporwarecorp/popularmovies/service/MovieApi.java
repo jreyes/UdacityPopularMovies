@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.OkHttpClient;
 import com.vaporwarecorp.popularmovies.BuildConfig;
+import com.vaporwarecorp.popularmovies.model.MovieDetail;
 import com.vaporwarecorp.popularmovies.model.MoviePager;
 import com.vaporwarecorp.popularmovies.model.ReviewPager;
 import com.vaporwarecorp.popularmovies.model.VideoPager;
@@ -16,6 +17,7 @@ import retrofit.http.GET;
 import retrofit.http.Path;
 import retrofit.http.Query;
 import rx.Observable;
+import rx.functions.Func2;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,21 +36,17 @@ public class MovieApi {
 
 // -------------------------- INNER CLASSES --------------------------
 
-    public interface MovieService {
-        @GET("/movie/popular")
-        Observable<MoviePager> getPopular(@Query("page") int page);
+    interface MovieService {
+        @GET("/movie/popular") Observable<MoviePager> getPopular(@Query("page") int page);
 
-        @GET("/movie/{id}/reviews")
-        Observable<ReviewPager> getReviews(@Path("id") int movieId);
+        @GET("/movie/{id}/reviews") Observable<ReviewPager> getReviews(@Path("id") int movieId);
 
-        @GET("/movie/top_rated")
-        Observable<MoviePager> getTopRated(@Query("page") int page);
+        @GET("/movie/top_rated") Observable<MoviePager> getTopRated(@Query("page") int page);
 
-        @GET("/movie/{id}/videos")
-        Observable<VideoPager> getVideos(@Path("id") int movieId);
+        @GET("/movie/{id}/videos") Observable<VideoPager> getVideos(@Path("id") int movieId);
     }
 
-    public class AuthenticatorRequestInterceptor implements RequestInterceptor {
+    class AuthenticatorRequestInterceptor implements RequestInterceptor {
         @Override
         public void intercept(RequestFacade request) {
             request.addQueryParam("api_key", BuildConfig.MOVIEDB_API_KEY);
@@ -59,6 +57,7 @@ public class MovieApi {
 
     public MovieApi(File cacheDir) {
         this.mMovieService = new RestAdapter.Builder()
+                .setLogLevel(RestAdapter.LogLevel.BASIC)
                 .setClient(initOkClient(initCache(cacheDir)))
                 .setEndpoint(API_ENDPOINT)
                 .setConverter(gsonConverter())
@@ -69,20 +68,25 @@ public class MovieApi {
 
 // -------------------------- OTHER METHODS --------------------------
 
+    public Observable<MovieDetail> getMovieDetail(final int movieId) {
+        return Observable.zip(
+                mMovieService.getVideos(movieId),
+                mMovieService.getReviews(movieId),
+                new Func2<VideoPager, ReviewPager, MovieDetail>() {
+                    @Override
+                    public MovieDetail call(VideoPager videoPager, ReviewPager reviewPager) {
+                        return MovieDetail.newInstance(movieId, reviewPager.results, videoPager.results);
+                    }
+                }
+        );
+    }
+
     public Observable<MoviePager> getPopular(int page) {
         return mMovieService.getPopular(page);
     }
 
-    public Observable<ReviewPager> getReviews(int movieId) {
-        return mMovieService.getReviews(movieId);
-    }
-
     public Observable<MoviePager> getTopRated(int page) {
         return mMovieService.getTopRated(page);
-    }
-
-    public Observable<VideoPager> getVideos(int movieId) {
-        return mMovieService.getVideos(movieId);
     }
 
     private GsonConverter gsonConverter() {

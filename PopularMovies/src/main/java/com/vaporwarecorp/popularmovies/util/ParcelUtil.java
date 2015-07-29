@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class ParcelUtil {
 // ------------------------------ FIELDS ------------------------------
 
-    public static final String KEY_ACTION = "KEY_ACTION";
+    public static final String KEY_EVENT_TYPE = "KEY_EVENT_TYPE";
     public static final String KEY_MOVIE = "KEY_MOVIE";
     public static final String KEY_MOVIES = "KEY_MOVIES";
     public static final String KEY_PAGE = "KEY_PAGE";
@@ -16,8 +16,8 @@ public class ParcelUtil {
 
 // -------------------------- STATIC METHODS --------------------------
 
-    public static int getAction(Bundle bundle) {
-        return bundle.getInt(KEY_ACTION);
+    public static int getEventType(Bundle bundle) {
+        return bundle.getInt(KEY_EVENT_TYPE);
     }
 
     public static Movie getMovie(Bundle bundle) {
@@ -36,8 +36,8 @@ public class ParcelUtil {
         return bundle.getInt(KEY_TOTAL_PAGES);
     }
 
-    public static void setAction(Bundle bundle, int value) {
-        bundle.putInt(KEY_ACTION, value);
+    public static void setEventType(Bundle bundle, int value) {
+        bundle.putInt(KEY_EVENT_TYPE, value);
     }
 
     public static void setMovie(Bundle bundle, Movie value) {

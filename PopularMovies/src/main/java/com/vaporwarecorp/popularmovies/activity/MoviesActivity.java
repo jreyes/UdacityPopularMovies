@@ -63,7 +63,7 @@ public class MoviesActivity extends AppCompatActivity {
     }
 
     private void displayMovieDetails(Movie movie, boolean clicked) {
-        if (movie == null || (mMovie != null && mMovie.id == movie.id)) {
+        if (movie == null || (mMovie != null && mMovie.getId() == movie.getId())) {
             return;
         }
 
