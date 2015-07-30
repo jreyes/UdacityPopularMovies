@@ -5,8 +5,16 @@ import java.util.List;
 public class ReviewPager {
 // ------------------------------ FIELDS ------------------------------
 
-    public int page;
+    public int id;
     public List<Review> results;
-    public int totalPages;
-    public int totalResults;
+
+// ------------------------ CANONICAL METHODS ------------------------
+
+    @Override
+    public String toString() {
+        return "ReviewPager{" +
+                "id=" + id +
+                ", results=" + results +
+                '}';
+    }
 }

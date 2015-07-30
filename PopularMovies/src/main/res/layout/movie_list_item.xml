@@ -5,6 +5,6 @@
     android:layout_height="wrap_content"
     android:layout_margin="0dp"
     android:adjustViewBounds="true"
+    android:contentDescription="@string/poster"
     android:scaleType="fitXY"
-    android:src="@drawable/poster_placeholder"
-    android:contentDescription="@string/poster" />
+    android:src="@drawable/poster_placeholder" />

@@ -26,7 +26,9 @@
     <style name="posterDetailsStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:scaleType">fitXY</item>
+        <item name="android:adjustViewBounds">true</item>
+        <item name="android:fitsSystemWindows">true</item>
+        <item name="android:scaleType">centerCrop</item>
         <item name="android:src">@drawable/poster_placeholder</item>
     </style>
 

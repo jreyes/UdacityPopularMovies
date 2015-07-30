@@ -5,6 +5,6 @@
     android:layout_height="wrap_content"
     android:layout_margin="0dp"
     android:adjustViewBounds="true"
+    android:contentDescription="@string/video"
     android:scaleType="fitXY"
-     android:src="@drawable/video_placeholder"
-    android:contentDescription="@string/video" />
+    android:src="@drawable/video_placeholder" />

@@ -7,8 +7,8 @@ public class MovieDetail {
 // ------------------------------ FIELDS ------------------------------
 
     int movieId;
-    List<Review> reviews;
-    List<Video> videos;
+    ArrayList<Review> reviews;
+    ArrayList<Video> videos;
 
 // -------------------------- STATIC METHODS --------------------------
 
@@ -40,11 +40,11 @@ public class MovieDetail {
         return movieId;
     }
 
-    public List<Review> getReviews() {
+    public ArrayList<Review> getReviews() {
         return reviews;
     }
 
-    public List<Video> getVideos() {
+    public ArrayList<Video> getVideos() {
         return videos;
     }
 }
