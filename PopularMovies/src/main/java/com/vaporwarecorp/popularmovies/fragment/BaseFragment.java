@@ -1,6 +1,7 @@
 package com.vaporwarecorp.popularmovies.fragment;
 
 import android.os.Bundle;
+import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import com.vaporwarecorp.popularmovies.PopularMoviesApp;
@@ -11,11 +12,7 @@ import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
 public abstract class BaseFragment extends Fragment {
-// ------------------------------ FIELDS ------------------------------
-
     private CompositeSubscription mCompositeSubscription;
-
-// -------------------------- INNER CLASSES --------------------------
 
     interface Callback<T> {
         void failure();
@@ -25,18 +22,21 @@ public abstract class BaseFragment extends Fragment {
 
 // -------------------------- OTHER METHODS --------------------------
 
+    @CallSuper
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mCompositeSubscription = new CompositeSubscription();
     }
 
+    @CallSuper
     @Override
     public void onDestroy() {
         super.onDestroy();
         PopularMoviesApp.getRefWatcher(getActivity()).watch(this);
     }
 
+    @CallSuper
     @Override
     public void onDestroyView() {
         mCompositeSubscription.unsubscribe();
