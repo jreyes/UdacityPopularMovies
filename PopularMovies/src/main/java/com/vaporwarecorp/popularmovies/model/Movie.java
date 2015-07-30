@@ -7,6 +7,8 @@ import com.pushtorefresh.storio.sqlite.annotations.StorIOSQLiteType;
 
 import java.util.Date;
 
+import static com.vaporwarecorp.popularmovies.service.MovieDB.MovieEntry.*;
+
 @StorIOSQLiteType(table = "movies")
 public class Movie implements Parcelable {
 // ------------------------------ FIELDS ------------------------------
@@ -21,22 +23,22 @@ public class Movie implements Parcelable {
         }
     };
 
-    @StorIOSQLiteColumn(name = "backdrop_path")
+    @StorIOSQLiteColumn(name = COL_BACKDROP_PATH)
     String backdropPath;
-    @StorIOSQLiteColumn(name = "id", key = true)
+    @StorIOSQLiteColumn(name = COL_ID, key = true)
     int id;
-    @StorIOSQLiteColumn(name = "original_title")
+    @StorIOSQLiteColumn(name = COL_ORIGINAL_TITLE)
     String originalTitle;
-    @StorIOSQLiteColumn(name = "overview")
+    @StorIOSQLiteColumn(name = COL_OVERVIEW)
     String overview;
-    @StorIOSQLiteColumn(name = "poster_path")
+    @StorIOSQLiteColumn(name = COL_POSTER_PATH)
     String posterPath;
     Date releaseDate;
-    @StorIOSQLiteColumn(name = "release_date")
+    @StorIOSQLiteColumn(name = COL_RELEASE_DATE)
     Long releaseDateTime;
-    @StorIOSQLiteColumn(name = "vote_average")
+    @StorIOSQLiteColumn(name = COL_VOTE_AVERAGE)
     float voteAverage;
-    @StorIOSQLiteColumn(name = "vote_count")
+    @StorIOSQLiteColumn(name = COL_VOTE_COUNT)
     String voteCount;
 
 // --------------------------- CONSTRUCTORS ---------------------------

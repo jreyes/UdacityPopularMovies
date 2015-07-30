@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+
 import com.vaporwarecorp.popularmovies.PopularMoviesApp;
 import com.vaporwarecorp.popularmovies.R;
 import com.vaporwarecorp.popularmovies.adapter.MovieAdapter;
@@ -14,7 +15,9 @@ import com.vaporwarecorp.popularmovies.events.MovieTypeSelectedEvent;
 import com.vaporwarecorp.popularmovies.model.Movie;
 import com.vaporwarecorp.popularmovies.model.MoviePager;
 import com.vaporwarecorp.popularmovies.service.MovieApi;
+import com.vaporwarecorp.popularmovies.service.MovieDB;
 import com.vaporwarecorp.popularmovies.widget.EndlessGridView;
+
 import de.greenrobot.event.EventBus;
 
 import static com.vaporwarecorp.popularmovies.util.ParcelUtil.*;
@@ -22,6 +25,10 @@ import static com.vaporwarecorp.popularmovies.util.ParcelUtil.*;
 public class MoviesFragment extends BaseFragment
         implements EndlessGridView.OnMoreListener, AdapterView.OnItemClickListener {
 // ------------------------------ FIELDS ------------------------------
+
+    public static final int VIEW_TYPE_HIGHEST_RATED = 0;
+    public static final int VIEW_TYPE_MOST_POPULAR = 1;
+    public static final int VIEW_TYPE_FAVORITES = 2;
 
     Callback<MoviePager> mCallback = new Callback<MoviePager>() {
         @Override
@@ -42,6 +49,7 @@ public class MoviesFragment extends BaseFragment
 
     private MovieAdapter mMovieAdapter;
     private MovieApi mMovieApi;
+    private MovieDB mMovieDB;
     private int mPage;
     private EndlessGridView mRecyclerView;
     private int mTotalPages;
@@ -67,11 +75,14 @@ public class MoviesFragment extends BaseFragment
     @Override
     public void onMore() {
         switch (mViewType) {
-            case 0:
+            case VIEW_TYPE_HIGHEST_RATED:
                 subscribe(mMovieApi.getTopRated(mPage + 1), mCallback);
                 break;
-            case 1:
+            case VIEW_TYPE_MOST_POPULAR:
                 subscribe(mMovieApi.getPopular(mPage + 1), mCallback);
+                break;
+            case VIEW_TYPE_FAVORITES:
+                subscribe(mMovieDB.getMovies(), mCallback);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown view type: " + mViewType);

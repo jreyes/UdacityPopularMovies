@@ -1,21 +1,28 @@
 package com.vaporwarecorp.popularmovies.util;
 
-import android.content.res.Resources;
+import android.databinding.BindingAdapter;
+import android.databinding.BindingMethod;
+import android.databinding.BindingMethods;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.*;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.vaporwarecorp.popularmovies.R;
 import com.vaporwarecorp.popularmovies.service.MovieApi;
-import com.vaporwarecorp.popularmovies.widget.MarkView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+@BindingMethods({
+        @BindingMethod(type = com.vaporwarecorp.popularmovies.widget.MarkView.class,
+                attribute = "app:mv_mark",
+                method = "setMark")
+})
 public class ViewUtil {
 // ------------------------------ FIELDS ------------------------------
 
@@ -28,14 +35,6 @@ public class ViewUtil {
             return "";
         }
         return OUTPUT_DATE.format(date);
-    }
-
-    public static String formatString(Resources resources, int resourceId, String arg) {
-        return String.format(resources.getString(resourceId), arg);
-    }
-
-    public static void hide(View view) {
-        view.setVisibility(View.GONE);
     }
 
     public static void loadImage(ImageView imageView, int placeholderId, String url) {
@@ -57,20 +56,18 @@ public class ViewUtil {
         }
     }
 
-    public static void setBackdrop(View view, String backdropPath) {
+    @BindingAdapter({"bind:backdropPath"})
+    public static void setBackdrop(ImageView imageView, String backdropPath) {
         if (backdropPath != null) {
-            loadImage((ImageView) view.findViewById(R.id.backdrop), R.drawable.backdrop_placeholder, MovieApi.BACKDROP_PATH + backdropPath);
+            loadImage(imageView, R.drawable.backdrop_placeholder, MovieApi.BACKDROP_PATH + backdropPath);
         }
-    }
-
-    public static void setMark(View view, int resourceId, float value) {
-        ((MarkView) view.findViewById(resourceId)).setMark(value);
     }
 
     public static void setPoster(View view, String posterPath) {
         setPoster((ImageView) view.findViewById(R.id.poster), posterPath);
     }
 
+    @BindingAdapter({"bind:posterPath"})
     public static void setPoster(ImageView imageView, String posterPath) {
         if (posterPath != null) {
             loadImage(imageView, R.drawable.poster_placeholder, MovieApi.POSTER_PATH + posterPath);
@@ -86,21 +83,9 @@ public class ViewUtil {
         spinner.setOnItemSelectedListener(onItemSelectedListener);
     }
 
-    public static void setText(View view, int resourceId, String value) {
-        ((TextView) view.findViewById(resourceId)).setText(value);
-    }
-
-    public static void setText(View view, int resourceId, int stringResourceId, String arg) {
-        setText(view, resourceId, formatString(view.getResources(), stringResourceId, arg));
-    }
-
     public static void setVideo(ImageView imageView, String videoPath) {
         if (videoPath != null) {
             loadImage(imageView, R.drawable.video_placeholder, String.format(MovieApi.VIDEO_PATH, videoPath));
         }
-    }
-
-    public static void show(View view) {
-        view.setVisibility(View.VISIBLE);
     }
 }

@@ -10,6 +10,22 @@ public class MoviePager {
     public int totalPages;
     public int totalResults;
 
+// -------------------------- STATIC METHODS --------------------------
+
+    public static MoviePager newInstance(int page, int totalPages, int totalResults, List<Movie> movies) {
+        MoviePager moviePager = new MoviePager();
+        moviePager.page = page;
+        moviePager.totalPages = totalPages;
+        moviePager.totalResults = totalResults;
+        moviePager.results = movies;
+        return moviePager;
+    }
+
+// --------------------------- CONSTRUCTORS ---------------------------
+
+    MoviePager() {
+    }
+
 // ------------------------ CANONICAL METHODS ------------------------
 
     @Override

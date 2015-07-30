@@ -7,12 +7,12 @@ import android.util.Log;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 import com.vaporwarecorp.popularmovies.service.MovieApi;
+import com.vaporwarecorp.popularmovies.service.MovieDB;
 import timber.log.Timber;
 
 public class PopularMoviesApp extends Application {
-// ------------------------------ FIELDS ------------------------------
-
     private MovieApi mMovieApi;
+    private MovieDB mMovieDB;
     private RefWatcher mRefWatcher;
 
 // -------------------------- STATIC METHODS --------------------------
@@ -25,11 +25,13 @@ public class PopularMoviesApp extends Application {
         return getApplication(context).mMovieApi;
     }
 
+    public static MovieDB getMovieDb(@NonNull Context context) {
+        return getApplication(context).mMovieDB;
+    }
+
     public static RefWatcher getRefWatcher(@NonNull Context context) {
         return getApplication(context).mRefWatcher;
     }
-
-// -------------------------- INNER CLASSES --------------------------
 
     private static class CrashReportingTree extends Timber.Tree {
         @Override
@@ -48,6 +50,7 @@ public class PopularMoviesApp extends Application {
 
         initLeakCanary();
         initMovieApi();
+        initMovieDB();
         initTimber();
     }
 
@@ -57,6 +60,10 @@ public class PopularMoviesApp extends Application {
 
     private void initMovieApi() {
         mMovieApi = new MovieApi(getApplicationContext().getCacheDir());
+    }
+
+    private void initMovieDB() {
+        mMovieDB = new MovieDB(getApplicationContext());
     }
 
     private void initTimber() {

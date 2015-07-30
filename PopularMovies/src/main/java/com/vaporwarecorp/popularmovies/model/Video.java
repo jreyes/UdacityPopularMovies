@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import com.pushtorefresh.storio.sqlite.annotations.StorIOSQLiteColumn;
 import com.pushtorefresh.storio.sqlite.annotations.StorIOSQLiteType;
 
+import static com.vaporwarecorp.popularmovies.service.MovieDB.VideoEntry.*;
+
 @StorIOSQLiteType(table = "videos")
 public class Video implements Parcelable {
 // ------------------------------ FIELDS ------------------------------
@@ -20,11 +22,11 @@ public class Video implements Parcelable {
         }
     };
 
-    @StorIOSQLiteColumn(name = "id", key = true)
+    @StorIOSQLiteColumn(name = COL_ID, key = true)
     String id;
-    @StorIOSQLiteColumn(name = "key")
+    @StorIOSQLiteColumn(name = COL_KEY)
     String key;
-    @StorIOSQLiteColumn(name = "movie_id")
+    @StorIOSQLiteColumn(name = COL_MOVIE_ID)
     int movieId;
 
 // -------------------------- STATIC METHODS --------------------------

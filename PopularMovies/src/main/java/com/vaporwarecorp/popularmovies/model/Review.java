@@ -6,6 +6,8 @@ import android.support.annotation.NonNull;
 import com.pushtorefresh.storio.sqlite.annotations.StorIOSQLiteColumn;
 import com.pushtorefresh.storio.sqlite.annotations.StorIOSQLiteType;
 
+import static com.vaporwarecorp.popularmovies.service.MovieDB.ReviewEntry.*;
+
 @StorIOSQLiteType(table = "reviews")
 public class Review implements Parcelable {
 // ------------------------------ FIELDS ------------------------------
@@ -20,13 +22,13 @@ public class Review implements Parcelable {
         }
     };
 
-    @StorIOSQLiteColumn(name = "author")
+    @StorIOSQLiteColumn(name = COL_AUTHOR)
     String author;
-    @StorIOSQLiteColumn(name = "content")
+    @StorIOSQLiteColumn(name = COL_CONTENT)
     String content;
-    @StorIOSQLiteColumn(name = "id", key = true)
+    @StorIOSQLiteColumn(name = COL_ID, key = true)
     String id;
-    @StorIOSQLiteColumn(name = "movie_id")
+    @StorIOSQLiteColumn(name = COL_MOVIE_ID)
     int movieId;
 
 // -------------------------- STATIC METHODS --------------------------

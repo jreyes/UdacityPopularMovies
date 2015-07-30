@@ -1,5 +1,6 @@
 package com.vaporwarecorp.popularmovies.service;
 
+import android.content.Context;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
 import com.pushtorefresh.storio.sqlite.SQLiteTypeMapping;
@@ -9,14 +10,48 @@ import com.pushtorefresh.storio.sqlite.operations.put.PutResult;
 import com.pushtorefresh.storio.sqlite.queries.Query;
 import com.vaporwarecorp.popularmovies.model.*;
 import rx.Observable;
+import rx.functions.Func1;
 import rx.functions.Func2;
 
 import java.util.List;
 
 public class MovieDB {
-// ------------------------------ FIELDS ------------------------------
-
     private StorIOSQLite mStorIOSQLite;
+
+// -------------------------- INNER CLASSES --------------------------
+
+    public static class MovieEntry {
+        public static final String TABLE_NAME = "movies";
+        public static final String COL_ID = "_id";
+        public static final String COL_ORIGINAL_TITLE = "original_title";
+        public static final String COL_OVERVIEW = "overview";
+        public static final String COL_POSTER_PATH = "poster_path";
+        public static final String COL_BACKDROP_PATH = "backdrop_path";
+        public static final String COL_RELEASE_DATE = "release_date";
+        public static final String COL_VOTE_AVERAGE = "vote_average";
+        public static final String COL_VOTE_COUNT = "vote_count";
+    }
+
+    public static class ReviewEntry {
+        public static final String TABLE_NAME = "reviews";
+        public static final String COL_ID = "_id";
+        public static final String COL_AUTHOR = "author";
+        public static final String COL_CONTENT = "content";
+        public static final String COL_MOVIE_ID = "movie_id";
+    }
+
+    public static class VideoEntry {
+        public static final String TABLE_NAME = "videos";
+        public static final String COL_ID = "_id";
+        public static final String COL_KEY = "key";
+        public static final String COL_MOVIE_ID = "movie_id";
+    }
+
+// --------------------------- CONSTRUCTORS ---------------------------
+
+    public MovieDB(Context context) {
+        mStorIOSQLite = provideStorIOSQLite(new MovieDBOpenHelper(context));
+    }
 
 // -------------------------- OTHER METHODS --------------------------
 
@@ -33,13 +68,19 @@ public class MovieDB {
         );
     }
 
-    public Observable<List<Movie>> getMovies() {
+    public Observable<MoviePager> getMovies() {
         return mStorIOSQLite
                 .get()
                 .listOfObjects(Movie.class)
-                .withQuery(Query.builder().table("movies").build())
+                .withQuery(Query.builder().table(MovieEntry.TABLE_NAME).build())
                 .prepare()
-                .createObservable();
+                .createObservable()
+                .flatMap(new Func1<List<Movie>, Observable<MoviePager>>() {
+                    @Override
+                    public Observable<MoviePager> call(List<Movie> movies) {
+                        return Observable.just(MoviePager.newInstance(1, 1, movies.size(), movies));
+                    }
+                });
     }
 
     private Observable<List<Review>> getReviews(int movieId) {
@@ -48,8 +89,8 @@ public class MovieDB {
                 .listOfObjects(Review.class)
                 .withQuery(Query
                         .builder()
-                        .table("reviews")
-                        .where("movie_id=?")
+                        .table(ReviewEntry.TABLE_NAME)
+                        .where(ReviewEntry.COL_MOVIE_ID + "=?")
                         .whereArgs(movieId)
                         .build())
                 .prepare()
@@ -62,8 +103,8 @@ public class MovieDB {
                 .listOfObjects(Video.class)
                 .withQuery(Query
                         .builder()
-                        .table("videos")
-                        .where("movie_id=?")
+                        .table(VideoEntry.TABLE_NAME)
+                        .where(VideoEntry.COL_MOVIE_ID + "=?")
                         .whereArgs(movieId)
                         .build())
                 .prepare()
