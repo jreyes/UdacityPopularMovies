@@ -21,7 +21,6 @@ import com.vaporwarecorp.popularmovies.events.FavoriteRemovedEvent;
 import com.vaporwarecorp.popularmovies.model.Movie;
 import com.vaporwarecorp.popularmovies.model.Review;
 import com.vaporwarecorp.popularmovies.model.Video;
-import com.vaporwarecorp.popularmovies.service.MovieApi;
 import com.vaporwarecorp.popularmovies.service.MovieDB;
 import de.greenrobot.event.EventBus;
 
@@ -82,10 +81,6 @@ public class MovieDetailsFragment extends BaseFragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_share) {
-            if (mBinding.getVideos().isEmpty()) {
-                displayMessage(R.string.share_video_error);
-                return false;
-            }
             shareVideo(mBinding.getVideos().get(0));
         }
         return true;
@@ -120,16 +115,13 @@ public class MovieDetailsFragment extends BaseFragment {
         mBinding.removeFavorite.setOnClickListener(v -> onRemoveFavoriteClicked());
 
         if (savedInstanceState == null) {
-            mBinding.setMovie(getMovie(getArguments()));
-            MovieApi movieApi = getMovieApi(getActivity());
-            subscribe(
-                    movieApi.getMovieDetail(mBinding.getMovie().id),
-                    movieDetail -> updateMovieDetail(movieDetail.reviews, movieDetail.videos),
-                    throwable -> displayError(throwable, R.string.movie_details_error)
-            );
+            if (isNetworkAvailable()) {
+                refreshMovieDetailsFromNetwork();
+            } else {
+                refreshMovieDetailsFromDatabase();
+            }
         } else {
-            mBinding.setMovie(getMovie(savedInstanceState));
-            updateMovieDetail(getReviews(savedInstanceState), getVideos(savedInstanceState));
+            refreshMovieDetailsFromInstance(savedInstanceState);
         }
     }
 
@@ -178,16 +170,46 @@ public class MovieDetailsFragment extends BaseFragment {
         startActivityForResult(intent, YOUTUBE_PLAY_INTENT);
     }
 
+    private void refreshMovieDetailsFromDatabase() {
+        mBinding.setMovie(getMovie(getArguments()));
+        subscribe(
+                mMovieDB.getMovieDetail(mBinding.getMovie().id),
+                movieDetail -> updateMovieDetail(movieDetail.reviews, movieDetail.videos),
+                throwable -> displayError(throwable, R.string.movie_details_error)
+        );
+    }
+
+    private void refreshMovieDetailsFromInstance(Bundle savedInstanceState) {
+        mBinding.setMovie(getMovie(savedInstanceState));
+        updateMovieDetail(getReviews(savedInstanceState), getVideos(savedInstanceState));
+    }
+
+    private void refreshMovieDetailsFromNetwork() {
+        mBinding.setMovie(getMovie(getArguments()));
+        subscribe(
+                getMovieApi(getActivity()).getMovieDetail(mBinding.getMovie().id),
+                movieDetail -> updateMovieDetail(movieDetail.reviews, movieDetail.videos),
+                throwable -> displayError(throwable, R.string.movie_details_error)
+        );
+    }
+
     private void updateMovieDetail(ArrayList<Review> reviews, ArrayList<Video> videos) {
         mBinding.setFavorite(mMovieDB.movieExists(mBinding.getMovie().id));
         mBinding.setReviews(reviews);
         mBinding.setVideos(videos);
+
+        // display share menu only if there are videos
+        setMenuVisibility(!videos.isEmpty());
+
+        // and if there are videos bind them
         if (!videos.isEmpty()) {
             mBinding.videosView.setOnItemClickListener(
                     (parent, view, position, id) -> playVideo((Video) parent.getItemAtPosition(position))
             );
             mBinding.playButton.setOnClickListener(v -> playVideo(mBinding.getVideos().get(0)));
         }
+
+        // set the adapters
         mBinding.videosView.setAdapter(new VideoAdapter(videos));
         mBinding.reviewsView.setAdapter(new ReviewAdapter(reviews));
     }

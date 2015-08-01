@@ -54,7 +54,6 @@ public class MovieApi {
 
     public MovieApi(File cacheDir) {
         this.mMovieService = new RestAdapter.Builder()
-                .setLogLevel(RestAdapter.LogLevel.BASIC)
                 .setClient(initOkClient(initCache(cacheDir)))
                 .setEndpoint(API_ENDPOINT)
                 .setConverter(gsonConverter())

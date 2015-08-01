@@ -43,7 +43,7 @@ public class ViewUtil {
         Glide
                 .with(imageView.getContext())
                 .load(url)
-                .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .placeholder(placeholderId)
                 .into(imageView);
     }
