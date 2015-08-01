@@ -63,7 +63,7 @@ public class PopularMoviesApp extends Application {
     }
 
     private void initMovieDB() {
-       mMovieDB = new MovieDB(this);
+        mMovieDB = new MovieDB(this);
     }
 
     private void initTimber() {

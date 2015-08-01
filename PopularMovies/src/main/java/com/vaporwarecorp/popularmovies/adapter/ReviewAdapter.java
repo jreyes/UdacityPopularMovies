@@ -10,8 +10,6 @@ import com.vaporwarecorp.popularmovies.model.Review;
 import java.util.List;
 
 public class ReviewAdapter extends BaseAdapter<Review> {
-// -------------------------- INNER CLASSES --------------------------
-
     class ViewHolder {
         TextView author;
         TextView content;

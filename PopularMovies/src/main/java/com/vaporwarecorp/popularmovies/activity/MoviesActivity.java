@@ -1,11 +1,9 @@
 package com.vaporwarecorp.popularmovies.activity;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
-
 import com.vaporwarecorp.popularmovies.PopularMoviesApp;
 import com.vaporwarecorp.popularmovies.R;
 import com.vaporwarecorp.popularmovies.events.MovieSelectedEvent;
@@ -13,7 +11,6 @@ import com.vaporwarecorp.popularmovies.events.MovieTypeSelectedEvent;
 import com.vaporwarecorp.popularmovies.fragment.MovieDetailsFragment;
 import com.vaporwarecorp.popularmovies.model.Movie;
 import com.vaporwarecorp.popularmovies.util.ViewUtil;
-
 import de.greenrobot.event.EventBus;
 
 import static com.vaporwarecorp.popularmovies.util.ParcelUtil.getMovie;

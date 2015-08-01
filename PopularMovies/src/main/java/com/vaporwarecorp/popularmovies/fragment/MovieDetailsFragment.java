@@ -10,13 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-
 import com.google.android.youtube.player.YouTubeIntents;
 import com.google.android.youtube.player.YouTubeStandalonePlayer;
 import com.vaporwarecorp.popularmovies.BuildConfig;
 import com.vaporwarecorp.popularmovies.PopularMoviesApp;
 import com.vaporwarecorp.popularmovies.R;
-import com.vaporwarecorp.popularmovies.activity.MoviesActivity;
 import com.vaporwarecorp.popularmovies.adapter.ReviewAdapter;
 import com.vaporwarecorp.popularmovies.adapter.VideoAdapter;
 import com.vaporwarecorp.popularmovies.databinding.FragmentMovieDetailsBinding;
@@ -27,10 +25,9 @@ import com.vaporwarecorp.popularmovies.model.Review;
 import com.vaporwarecorp.popularmovies.model.Video;
 import com.vaporwarecorp.popularmovies.service.MovieApi;
 import com.vaporwarecorp.popularmovies.service.MovieDB;
+import de.greenrobot.event.EventBus;
 
 import java.util.ArrayList;
-
-import de.greenrobot.event.EventBus;
 
 import static com.vaporwarecorp.popularmovies.PopularMoviesApp.getMovieApi;
 import static com.vaporwarecorp.popularmovies.util.ParcelUtil.*;
@@ -41,13 +38,13 @@ public class MovieDetailsFragment extends BaseFragment {
     public static final String YOUTUBE_PATH = "http://www.youtube.com/watch?v=";
     public static final int YOUTUBE_PLAY_INTENT = 1;
 
-    Callback<Void> mAddFavoriteCallback = new Callback<Void>() {
+    Callback<Movie> mAddFavoriteCallback = new Callback<Movie>() {
         @Override
         public void failure() {
         }
 
         @Override
-        public void success(Void value) {
+        public void success(Movie movie) {
             mBinding.setFavorite(true);
         }
     };
@@ -58,25 +55,7 @@ public class MovieDetailsFragment extends BaseFragment {
 
         @Override
         public void success(MovieDetail movieDetail) {
-            updateMovieDetail(movieDetail.getReviews(), movieDetail.getVideos());
-        }
-    };
-    View.OnClickListener mOnAddFavoriteClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            addFavorite();
-        }
-    };
-    AdapterView.OnItemClickListener mOnItemClickListener = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            playVideo((Video) parent.getItemAtPosition(position));
-        }
-    };
-    View.OnClickListener mOnRemoveFavoriteClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            removeFavorite();
+            updateMovieDetail(movieDetail.reviews, movieDetail.videos);
         }
     };
     Callback<Movie> mRemoveFavoriteCallback = new Callback<Movie>() {
@@ -90,6 +69,7 @@ public class MovieDetailsFragment extends BaseFragment {
             EventBus.getDefault().post(new FavoriteRemovedEvent(movie));
         }
     };
+    AdapterView.OnItemClickListener mOnItemClickListener = (parent, view, position, id) -> playVideo((Video) parent.getItemAtPosition(position));
 
     private FragmentMovieDetailsBinding mBinding;
     private MovieDB mMovieDB;
@@ -137,7 +117,7 @@ public class MovieDetailsFragment extends BaseFragment {
 
     private void addFavorite() {
         subscribe(
-                mMovieDB.addMovie(mBinding.getMovie(), mBinding.getVideos(), mBinding.getReviews()),
+                mMovieDB.addMovie(mBinding.getMovie(), mBinding.getReviews(), mBinding.getVideos()),
                 mAddFavoriteCallback
         );
     }
@@ -151,8 +131,8 @@ public class MovieDetailsFragment extends BaseFragment {
         mMovieDB = PopularMoviesApp.getMovieDb(getActivity());
 
         mBinding = DataBindingUtil.bind(view);
-        mBinding.addFavorite.setOnClickListener(mOnAddFavoriteClick);
-        mBinding.removeFavorite.setOnClickListener(mOnRemoveFavoriteClick);
+        mBinding.addFavorite.setOnClickListener(v -> addFavorite());
+        mBinding.removeFavorite.setOnClickListener(v -> removeFavorite());
         if (savedInstanceState == null) {
             mBinding.setMovie(getMovie(getArguments()));
             MovieApi movieApi = getMovieApi(getActivity());

@@ -3,15 +3,13 @@ package com.vaporwarecorp.popularmovies.service.entity;
 import com.raizlabs.android.dbflow.annotation.Column;
 import com.raizlabs.android.dbflow.annotation.PrimaryKey;
 import com.raizlabs.android.dbflow.annotation.Table;
-import com.raizlabs.android.dbflow.sql.builder.Condition;
-import com.raizlabs.android.dbflow.sql.language.Delete;
 import com.raizlabs.android.dbflow.structure.BaseModel;
 import com.vaporwarecorp.popularmovies.model.Movie;
 import com.vaporwarecorp.popularmovies.service.MovieDB;
 
 import java.util.Date;
 
-@Table(databaseName = MovieDB.PopularMovies.NAME)
+@Table(databaseName = MovieDB.NAME)
 public class MovieEntity extends BaseModel {
 // ------------------------------ FIELDS ------------------------------
 
@@ -37,55 +35,5 @@ public class MovieEntity extends BaseModel {
         entity.voteAverage = movie.voteAverage;
         entity.voteCount = movie.voteCount;
         return entity;
-    }
-
-// --------------------- GETTER / SETTER METHODS ---------------------
-
-    public String getBackdropPath() {
-        return backdropPath;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getOriginalTitle() {
-        return originalTitle;
-    }
-
-    public String getOverview() {
-        return overview;
-    }
-
-    public String getPosterPath() {
-        return posterPath;
-    }
-
-    public Date getReleaseDate() {
-        return releaseDate;
-    }
-
-    public float getVoteAverage() {
-        return voteAverage;
-    }
-
-    public String getVoteCount() {
-        return voteCount;
-    }
-
-// -------------------------- OTHER METHODS --------------------------
-
-    public void deleteReviews() {
-        new Delete()
-                .from(ReviewEntity.class)
-                .where(Condition.column(ReviewEntity$Table.MOVIEID).is(id))
-                .query();
-    }
-
-    public void deleteVideos() {
-        new Delete()
-                .from(VideoEntity.class)
-                .where(Condition.column(VideoEntity$Table.MOVIEID).is(id))
-                .query();
     }
 }

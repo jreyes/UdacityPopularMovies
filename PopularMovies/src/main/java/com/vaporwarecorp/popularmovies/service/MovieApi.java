@@ -17,7 +17,6 @@ import retrofit.http.GET;
 import retrofit.http.Path;
 import retrofit.http.Query;
 import rx.Observable;
-import rx.functions.Func2;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +33,12 @@ public class MovieApi {
 
     private MovieService mMovieService;
 
-// -------------------------- INNER CLASSES --------------------------
+    class AuthenticatorRequestInterceptor implements RequestInterceptor {
+        @Override
+        public void intercept(RequestFacade request) {
+            request.addQueryParam("api_key", BuildConfig.MOVIEDB_API_KEY);
+        }
+    }
 
     interface MovieService {
         @GET("/movie/popular") Observable<MoviePager> getPopular(@Query("page") int page);
@@ -44,13 +48,6 @@ public class MovieApi {
         @GET("/movie/top_rated") Observable<MoviePager> getTopRated(@Query("page") int page);
 
         @GET("/movie/{id}/videos") Observable<VideoPager> getVideos(@Path("id") int movieId);
-    }
-
-    class AuthenticatorRequestInterceptor implements RequestInterceptor {
-        @Override
-        public void intercept(RequestFacade request) {
-            request.addQueryParam("api_key", BuildConfig.MOVIEDB_API_KEY);
-        }
     }
 
 // --------------------------- CONSTRUCTORS ---------------------------
@@ -68,16 +65,11 @@ public class MovieApi {
 
 // -------------------------- OTHER METHODS --------------------------
 
-    public Observable<MovieDetail> getMovieDetail(final int movieId) {
+    public Observable<MovieDetail> getMovieDetail(int movieId) {
         return Observable.zip(
                 mMovieService.getVideos(movieId),
                 mMovieService.getReviews(movieId),
-                new Func2<VideoPager, ReviewPager, MovieDetail>() {
-                    @Override
-                    public MovieDetail call(VideoPager videoPager, ReviewPager reviewPager) {
-                        return MovieDetail.newInstance(movieId, reviewPager.results, videoPager.results);
-                    }
-                }
+                (videoPager, reviewPager) -> MovieDetail.newInstance(movieId, reviewPager.results, videoPager.results)
         );
     }
 

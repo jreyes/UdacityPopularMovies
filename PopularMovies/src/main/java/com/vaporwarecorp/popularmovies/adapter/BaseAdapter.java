@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class BaseAdapter<T> extends android.widget.BaseAdapter {
-// ------------------------------ FIELDS ------------------------------
-
     private List<T> mItems;
 
 // --------------------------- CONSTRUCTORS ---------------------------
@@ -47,7 +45,7 @@ public abstract class BaseAdapter<T> extends android.widget.BaseAdapter {
     }
 
     public ArrayList<T> getItems() {
-        return new ArrayList<T>(mItems);
+        return new ArrayList<>(mItems);
     }
 
     public void removeItem(T item) {

@@ -22,6 +22,9 @@ public class Review implements Parcelable {
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
+    public Review() {
+    }
+
     protected Review(Parcel in) {
         this.author = in.readString();
         this.content = in.readString();

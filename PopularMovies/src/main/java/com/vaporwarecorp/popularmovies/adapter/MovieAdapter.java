@@ -15,7 +15,7 @@ public class MovieAdapter extends BaseAdapter<Movie> {
 // --------------------------- CONSTRUCTORS ---------------------------
 
     public MovieAdapter() {
-        super(new ArrayList<Movie>());
+        super(new ArrayList<>());
     }
 
 // ------------------------ INTERFACE METHODS ------------------------

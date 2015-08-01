@@ -2,7 +2,6 @@ package com.vaporwarecorp.popularmovies.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import com.raizlabs.android.dbflow.structure.BaseModel;
 
 
 public class Video implements Parcelable {
@@ -22,6 +21,9 @@ public class Video implements Parcelable {
     public String key;
 
 // --------------------------- CONSTRUCTORS ---------------------------
+
+    public Video() {
+    }
 
     protected Video(Parcel in) {
         this.id = in.readString();

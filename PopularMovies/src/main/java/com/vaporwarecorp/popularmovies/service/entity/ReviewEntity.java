@@ -8,7 +8,7 @@ import com.vaporwarecorp.popularmovies.model.Movie;
 import com.vaporwarecorp.popularmovies.model.Review;
 import com.vaporwarecorp.popularmovies.service.MovieDB;
 
-@Table(databaseName = MovieDB.PopularMovies.NAME)
+@Table(databaseName = MovieDB.NAME)
 public class ReviewEntity extends BaseModel {
 // ------------------------------ FIELDS ------------------------------
 
@@ -26,23 +26,5 @@ public class ReviewEntity extends BaseModel {
         entity.id = review.id;
         entity.movieId = movie.id;
         return entity;
-    }
-
-// --------------------- GETTER / SETTER METHODS ---------------------
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public int getMovieId() {
-        return movieId;
     }
 }

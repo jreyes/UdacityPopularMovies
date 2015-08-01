@@ -5,9 +5,9 @@ import java.util.ArrayList;
 public class MovieDetail {
 // ------------------------------ FIELDS ------------------------------
 
-    int movieId;
-    ArrayList<Review> reviews;
-    ArrayList<Video> videos;
+    public int movieId;
+    public ArrayList<Review> reviews;
+    public ArrayList<Video> videos;
 
 // -------------------------- STATIC METHODS --------------------------
 
@@ -17,24 +17,5 @@ public class MovieDetail {
         movieDetails.reviews = reviews;
         movieDetails.videos = videos;
         return movieDetails;
-    }
-
-// --------------------------- CONSTRUCTORS ---------------------------
-
-    MovieDetail() {
-    }
-
-// --------------------- GETTER / SETTER METHODS ---------------------
-
-    public int getMovieId() {
-        return movieId;
-    }
-
-    public ArrayList<Review> getReviews() {
-        return reviews;
-    }
-
-    public ArrayList<Video> getVideos() {
-        return videos;
     }
 }

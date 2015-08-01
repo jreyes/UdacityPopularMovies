@@ -8,7 +8,7 @@ import com.vaporwarecorp.popularmovies.model.Movie;
 import com.vaporwarecorp.popularmovies.model.Video;
 import com.vaporwarecorp.popularmovies.service.MovieDB;
 
-@Table(databaseName = MovieDB.PopularMovies.NAME)
+@Table(databaseName = MovieDB.NAME)
 public class VideoEntity extends BaseModel {
 // ------------------------------ FIELDS ------------------------------
 
@@ -24,19 +24,5 @@ public class VideoEntity extends BaseModel {
         entity.key = video.key;
         entity.movieId = movie.id;
         return entity;
-    }
-
-// --------------------- GETTER / SETTER METHODS ---------------------
-
-    public String getId() {
-        return id;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public int getMovieId() {
-        return movieId;
     }
 }
