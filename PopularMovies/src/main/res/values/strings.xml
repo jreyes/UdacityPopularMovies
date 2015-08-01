@@ -13,4 +13,10 @@
     <string name="poster">Poster</string>
     <string name="video">Video</string>
     <string name="vote_count">from %1$s users</string>
+
+    <string name="favorite_added">Movie added to favorites</string>
+    <string name="favorite_added_error">There was a problem adding the current favorite</string>
+    <string name="favorite_removed">Movie removed from favorites</string>
+    <string name="favorite_removed_error">There was a problem removing the current favorite</string>
+    <string name="movie_details_error">There was a problem retrieving the details of this movie</string>
 </resources>

@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import com.google.android.youtube.player.YouTubeIntents;
 import com.google.android.youtube.player.YouTubeStandalonePlayer;
 import com.vaporwarecorp.popularmovies.BuildConfig;
@@ -20,7 +19,6 @@ import com.vaporwarecorp.popularmovies.adapter.VideoAdapter;
 import com.vaporwarecorp.popularmovies.databinding.FragmentMovieDetailsBinding;
 import com.vaporwarecorp.popularmovies.events.FavoriteRemovedEvent;
 import com.vaporwarecorp.popularmovies.model.Movie;
-import com.vaporwarecorp.popularmovies.model.MovieDetail;
 import com.vaporwarecorp.popularmovies.model.Review;
 import com.vaporwarecorp.popularmovies.model.Video;
 import com.vaporwarecorp.popularmovies.service.MovieApi;
@@ -37,39 +35,6 @@ public class MovieDetailsFragment extends BaseFragment {
 
     public static final String YOUTUBE_PATH = "http://www.youtube.com/watch?v=";
     public static final int YOUTUBE_PLAY_INTENT = 1;
-
-    Callback<Movie> mAddFavoriteCallback = new Callback<Movie>() {
-        @Override
-        public void failure() {
-        }
-
-        @Override
-        public void success(Movie movie) {
-            mBinding.setFavorite(true);
-        }
-    };
-    Callback<MovieDetail> mMovieDetailCallback = new Callback<MovieDetail>() {
-        @Override
-        public void failure() {
-        }
-
-        @Override
-        public void success(MovieDetail movieDetail) {
-            updateMovieDetail(movieDetail.reviews, movieDetail.videos);
-        }
-    };
-    Callback<Movie> mRemoveFavoriteCallback = new Callback<Movie>() {
-        @Override
-        public void failure() {
-        }
-
-        @Override
-        public void success(Movie movie) {
-            mBinding.setFavorite(false);
-            EventBus.getDefault().post(new FavoriteRemovedEvent(movie));
-        }
-    };
-    AdapterView.OnItemClickListener mOnItemClickListener = (parent, view, position, id) -> playVideo((Video) parent.getItemAtPosition(position));
 
     private FragmentMovieDetailsBinding mBinding;
     private MovieDB mMovieDB;
@@ -115,13 +80,6 @@ public class MovieDetailsFragment extends BaseFragment {
         setReviews(outState, mBinding.getReviews());
     }
 
-    private void addFavorite() {
-        subscribe(
-                mMovieDB.addMovie(mBinding.getMovie(), mBinding.getReviews(), mBinding.getVideos()),
-                mAddFavoriteCallback
-        );
-    }
-
     private void initBindings(View view, Bundle savedInstanceState) {
         // fix for Glide loading when the activity is being destroyed
         if (getActivity().isDestroyed()) {
@@ -131,16 +89,48 @@ public class MovieDetailsFragment extends BaseFragment {
         mMovieDB = PopularMoviesApp.getMovieDb(getActivity());
 
         mBinding = DataBindingUtil.bind(view);
-        mBinding.addFavorite.setOnClickListener(v -> addFavorite());
-        mBinding.removeFavorite.setOnClickListener(v -> removeFavorite());
+        mBinding.addFavorite.setOnClickListener(v -> onAddFavoriteClicked());
+        mBinding.removeFavorite.setOnClickListener(v -> onRemoveFavoriteClicked());
+
         if (savedInstanceState == null) {
             mBinding.setMovie(getMovie(getArguments()));
             MovieApi movieApi = getMovieApi(getActivity());
-            subscribe(movieApi.getMovieDetail(mBinding.getMovie().id), mMovieDetailCallback);
+            subscribe(
+                    movieApi.getMovieDetail(mBinding.getMovie().id),
+                    movieDetail -> updateMovieDetail(movieDetail.reviews, movieDetail.videos),
+                    throwable -> displayError(throwable, R.string.movie_details_error)
+            );
         } else {
             mBinding.setMovie(getMovie(savedInstanceState));
             updateMovieDetail(getReviews(savedInstanceState), getVideos(savedInstanceState));
         }
+    }
+
+    private void onAddFavoriteClicked() {
+        subscribe(
+                mMovieDB.addMovie(mBinding.getMovie(), mBinding.getReviews(), mBinding.getVideos()),
+                movie -> onFavoriteAdded(),
+                throwable -> displayError(throwable, R.string.favorite_added_error)
+        );
+    }
+
+    private void onFavoriteAdded() {
+        mBinding.setFavorite(true);
+        displayMessage(R.string.favorite_added);
+    }
+
+    private void onFavoriteRemoved(Movie movie) {
+        mBinding.setFavorite(false);
+        displayMessage(R.string.favorite_removed);
+        EventBus.getDefault().post(new FavoriteRemovedEvent(movie));
+    }
+
+    private void onRemoveFavoriteClicked() {
+        subscribe(
+                mMovieDB.removeMovie(mBinding.getMovie()),
+                this::onFavoriteRemoved,
+                throwable -> displayError(throwable, R.string.favorite_removed_error)
+        );
     }
 
     private void playVideo(Video video) {
@@ -160,16 +150,14 @@ public class MovieDetailsFragment extends BaseFragment {
         startActivityForResult(intent, YOUTUBE_PLAY_INTENT);
     }
 
-    private void removeFavorite() {
-        subscribe(mMovieDB.removeMovie(mBinding.getMovie()), mRemoveFavoriteCallback);
-    }
-
     private void updateMovieDetail(ArrayList<Review> reviews, ArrayList<Video> videos) {
         mBinding.setFavorite(mMovieDB.movieExists(mBinding.getMovie().id));
         mBinding.setReviews(reviews);
         mBinding.setVideos(videos);
         if (!videos.isEmpty()) {
-            mBinding.videosView.setOnItemClickListener(mOnItemClickListener);
+            mBinding.videosView.setOnItemClickListener(
+                    (parent, view, position, id) -> playVideo((Video) parent.getItemAtPosition(position))
+            );
         }
         mBinding.videosView.setAdapter(new VideoAdapter(videos));
         mBinding.reviewsView.setAdapter(new ReviewAdapter(reviews));

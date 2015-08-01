@@ -3,22 +3,17 @@ package com.vaporwarecorp.popularmovies.fragment;
 import android.os.Bundle;
 import android.support.annotation.CallSuper;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import com.vaporwarecorp.popularmovies.PopularMoviesApp;
 import rx.Observable;
-import rx.Observer;
 import rx.android.app.AppObservable;
+import rx.functions.Action1;
 import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
 public abstract class BaseFragment extends Fragment {
     private CompositeSubscription mCompositeSubscription;
-
-    interface Callback<T> {
-        void failure();
-
-        void success(T value);
-    }
 
 // -------------------------- OTHER METHODS --------------------------
 
@@ -43,23 +38,20 @@ public abstract class BaseFragment extends Fragment {
         super.onDestroyView();
     }
 
-    protected final <T> void subscribe(final Observable<T> source, final Callback<T> callback) {
-        mCompositeSubscription.add(AppObservable.bindSupportFragment(this, source)
-                .subscribe(new Observer<T>() {
-                    @Override
-                    public void onCompleted() {
-                    }
+    protected void displayError(Throwable throwable, int resourceId) {
+        Timber.e(throwable, "Exception thrown");
+        if (getView() != null) {
+            Snackbar.make(getView(), resourceId, Snackbar.LENGTH_SHORT).show();
+        }
+    }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.e(e, "error on observable");
-                        callback.failure();
-                    }
+    protected void displayMessage(int resourceId) {
+        if (getView() != null) {
+            Snackbar.make(getView(), resourceId, Snackbar.LENGTH_SHORT).show();
+        }
+    }
 
-                    @Override
-                    public void onNext(T t) {
-                        callback.success(t);
-                    }
-                }));
+    protected final <T> void subscribe(final Observable<T> source, Action1<T> onSuccess, Action1<Throwable> onError) {
+        mCompositeSubscription.add(AppObservable.bindSupportFragment(this, source).subscribe(onSuccess, onError));
     }
 }

@@ -29,23 +29,6 @@ public class MoviesFragment extends BaseFragment
     public static final int VIEW_TYPE_HIGHEST_RATED = 0;
     public static final int VIEW_TYPE_MOST_POPULAR = 1;
 
-    Callback<MoviePager> mCallback = new Callback<MoviePager>() {
-        @Override
-        public void failure() {
-            mRecyclerView.stopLoadingMore();
-        }
-
-        @Override
-        public void success(MoviePager moviePager) {
-            mPage = moviePager.page;
-            mTotalPages = moviePager.totalPages;
-            mMovieAdapter.addItems(moviePager.results);
-            if (mPage == 1 && !moviePager.results.isEmpty()) {
-                postMovieSelected(moviePager.results.get(0), false);
-            }
-        }
-    };
-
     private MovieAdapter mMovieAdapter;
     private MovieApi mMovieApi;
     private MovieDB mMovieDB;
@@ -75,13 +58,13 @@ public class MoviesFragment extends BaseFragment
     public void onMore() {
         switch (mViewType) {
             case VIEW_TYPE_HIGHEST_RATED:
-                subscribe(mMovieApi.getTopRated(mPage + 1), mCallback);
+                subscribe(mMovieApi.getTopRated(mPage + 1), this::onMoviePagerSuccess, this::onMoviePagerError);
                 break;
             case VIEW_TYPE_MOST_POPULAR:
-                subscribe(mMovieApi.getPopular(mPage + 1), mCallback);
+                subscribe(mMovieApi.getPopular(mPage + 1), this::onMoviePagerSuccess, this::onMoviePagerError);
                 break;
             case VIEW_TYPE_FAVORITES:
-                subscribe(mMovieDB.getMovies(), mCallback);
+                subscribe(mMovieDB.getMovies(), this::onMoviePagerSuccess, this::onMoviePagerError);
                 break;
             default:
                 throw new IllegalArgumentException("Unknown view type: " + mViewType);
@@ -172,6 +155,19 @@ public class MoviesFragment extends BaseFragment
         mRecyclerView.setAdapter(mMovieAdapter);
         mRecyclerView.setOnItemClickListener(this);
         mRecyclerView.setOnMoreListener(this);
+    }
+
+    private void onMoviePagerError(Throwable throwable) {
+        mRecyclerView.stopLoadingMore();
+    }
+
+    private void onMoviePagerSuccess(MoviePager moviePager) {
+        mPage = moviePager.page;
+        mTotalPages = moviePager.totalPages;
+        mMovieAdapter.addItems(moviePager.results);
+        if (mPage == 1 && !moviePager.results.isEmpty()) {
+            postMovieSelected(moviePager.results.get(0), false);
+        }
     }
 
     private void postMovieSelected(Movie movie, boolean clicked) {
