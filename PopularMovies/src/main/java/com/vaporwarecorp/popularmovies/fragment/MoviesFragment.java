@@ -6,9 +6,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+
 import com.vaporwarecorp.popularmovies.PopularMoviesApp;
 import com.vaporwarecorp.popularmovies.R;
 import com.vaporwarecorp.popularmovies.adapter.MovieAdapter;
+import com.vaporwarecorp.popularmovies.events.FavoriteAddedEvent;
 import com.vaporwarecorp.popularmovies.events.FavoriteRemovedEvent;
 import com.vaporwarecorp.popularmovies.events.MovieSelectedEvent;
 import com.vaporwarecorp.popularmovies.events.MovieTypeSelectedEvent;
@@ -17,6 +19,7 @@ import com.vaporwarecorp.popularmovies.model.MoviePager;
 import com.vaporwarecorp.popularmovies.service.MovieApi;
 import com.vaporwarecorp.popularmovies.service.MovieDB;
 import com.vaporwarecorp.popularmovies.widget.EndlessGridView;
+
 import de.greenrobot.event.EventBus;
 
 import static com.vaporwarecorp.popularmovies.util.ParcelUtil.*;
@@ -105,13 +108,20 @@ public class MoviesFragment extends BaseFragment
         if (mViewType != VIEW_TYPE_FAVORITES) {
             return;
         }
-
         mMovieAdapter.removeItem(event.movie);
         if (!mMovieAdapter.getItems().isEmpty()) {
             postMovieSelected(mMovieAdapter.getItems().get(0), false);
         } else {
             postMovieSelected(null, false);
         }
+    }
+
+    @SuppressWarnings("unused")
+    public void onEvent(FavoriteAddedEvent event) {
+        if (mViewType != VIEW_TYPE_FAVORITES) {
+            return;
+        }
+        mMovieAdapter.addItem(event.movie);
     }
 
     @Override

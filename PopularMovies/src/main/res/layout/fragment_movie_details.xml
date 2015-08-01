@@ -57,13 +57,24 @@
                     android:layout_marginBottom="72dp"
                     android:orientation="vertical">
 
-                    <ImageView
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:adjustViewBounds="true"
-                        android:contentDescription="@null"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/backdrop_button" />
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:adjustViewBounds="true"
+                            android:contentDescription="@null"
+                            android:scaleType="fitXY"
+                            android:src="@drawable/backdrop_button" />
+
+                        <android.support.design.widget.FloatingActionButton
+                            android:id="@+id/play_button"
+                            style="@style/playButtonStyle"
+                            android:visibility="@{videos.size() > 0 ? View.VISIBLE : View.GONE}" />
+
+                    </FrameLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"

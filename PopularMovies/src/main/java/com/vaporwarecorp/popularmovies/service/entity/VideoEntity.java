@@ -15,6 +15,7 @@ public class VideoEntity extends BaseModel {
     @Column @PrimaryKey public String id;
     @Column public String key;
     @Column public int movieId;
+    @Column public String name;
 
 // -------------------------- STATIC METHODS --------------------------
 
@@ -23,6 +24,7 @@ public class VideoEntity extends BaseModel {
         entity.id = video.id;
         entity.key = video.key;
         entity.movieId = movie.id;
+        entity.name = video.name;
         return entity;
     }
 }

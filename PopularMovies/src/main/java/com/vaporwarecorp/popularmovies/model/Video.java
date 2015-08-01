@@ -19,6 +19,7 @@ public class Video implements Parcelable {
 
     public String id;
     public String key;
+    public String name;
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
@@ -28,6 +29,7 @@ public class Video implements Parcelable {
     protected Video(Parcel in) {
         this.id = in.readString();
         this.key = in.readString();
+        this.name = in.readString();
     }
 
 // ------------------------ INTERFACE METHODS ------------------------
@@ -44,5 +46,6 @@ public class Video implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.id);
         dest.writeString(this.key);
+        dest.writeString(this.name);
     }
 }

@@ -5,10 +5,9 @@ import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import com.google.android.youtube.player.YouTubeIntents;
 import com.google.android.youtube.player.YouTubeStandalonePlayer;
 import com.vaporwarecorp.popularmovies.BuildConfig;
@@ -17,6 +16,7 @@ import com.vaporwarecorp.popularmovies.R;
 import com.vaporwarecorp.popularmovies.adapter.ReviewAdapter;
 import com.vaporwarecorp.popularmovies.adapter.VideoAdapter;
 import com.vaporwarecorp.popularmovies.databinding.FragmentMovieDetailsBinding;
+import com.vaporwarecorp.popularmovies.events.FavoriteAddedEvent;
 import com.vaporwarecorp.popularmovies.events.FavoriteRemovedEvent;
 import com.vaporwarecorp.popularmovies.model.Movie;
 import com.vaporwarecorp.popularmovies.model.Review;
@@ -67,10 +67,28 @@ public class MovieDetailsFragment extends BaseFragment {
 // -------------------------- OTHER METHODS --------------------------
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_movie_details, menu);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_movie_details, container, false);
+        setHasOptionsMenu(true);
         initBindings(view, savedInstanceState);
         return view;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.menu_share) {
+            if (mBinding.getVideos().isEmpty()) {
+                displayMessage(R.string.share_video_error);
+                return false;
+            }
+            shareVideo(mBinding.getVideos().get(0));
+        }
+        return true;
     }
 
     @Override
@@ -78,6 +96,15 @@ public class MovieDetailsFragment extends BaseFragment {
         setMovie(outState, mBinding.getMovie());
         setVideos(outState, mBinding.getVideos());
         setReviews(outState, mBinding.getReviews());
+    }
+
+    public void shareVideo(Video video) {
+        Intent intent = ShareCompat.IntentBuilder
+                .from(getActivity())
+                .setType("text/plain")
+                .setText(getString(R.string.share_video, video.name, YOUTUBE_PATH + video.key))
+                .getIntent();
+        startActivity(Intent.createChooser(intent, getString(R.string.share_video_title)));
     }
 
     private void initBindings(View view, Bundle savedInstanceState) {
@@ -109,14 +136,15 @@ public class MovieDetailsFragment extends BaseFragment {
     private void onAddFavoriteClicked() {
         subscribe(
                 mMovieDB.addMovie(mBinding.getMovie(), mBinding.getReviews(), mBinding.getVideos()),
-                movie -> onFavoriteAdded(),
+                this::onFavoriteAdded,
                 throwable -> displayError(throwable, R.string.favorite_added_error)
         );
     }
 
-    private void onFavoriteAdded() {
+    private void onFavoriteAdded(Movie movie) {
         mBinding.setFavorite(true);
         displayMessage(R.string.favorite_added);
+        EventBus.getDefault().post(new FavoriteAddedEvent(movie));
     }
 
     private void onFavoriteRemoved(Movie movie) {
@@ -158,6 +186,7 @@ public class MovieDetailsFragment extends BaseFragment {
             mBinding.videosView.setOnItemClickListener(
                     (parent, view, position, id) -> playVideo((Video) parent.getItemAtPosition(position))
             );
+            mBinding.playButton.setOnClickListener(v -> playVideo(mBinding.getVideos().get(0)));
         }
         mBinding.videosView.setAdapter(new VideoAdapter(videos));
         mBinding.reviewsView.setAdapter(new ReviewAdapter(reviews));

@@ -1,6 +1,7 @@
 package com.vaporwarecorp.popularmovies.service;
 
 import android.content.Context;
+
 import com.raizlabs.android.dbflow.annotation.Database;
 import com.raizlabs.android.dbflow.config.FlowManager;
 import com.raizlabs.android.dbflow.sql.builder.Condition;
@@ -8,17 +9,18 @@ import com.raizlabs.android.dbflow.sql.language.Delete;
 import com.raizlabs.android.dbflow.sql.language.Select;
 import com.vaporwarecorp.popularmovies.model.*;
 import com.vaporwarecorp.popularmovies.service.entity.*;
+
 import rx.Observable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Database(name = MovieDB.NAME, version = MovieDB.VERSION)
+@Database(name = MovieDB.NAME, version = MovieDB.VERSION, consistencyCheckEnabled = true)
 public class MovieDB {
 // ------------------------------ FIELDS ------------------------------
 
     public static final String NAME = "popular_movies";
-    public static final int VERSION = 1;
+    public static final int VERSION = 2;
 
     private MovieService mMovieService;
 

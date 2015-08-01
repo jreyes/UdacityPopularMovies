@@ -114,6 +114,20 @@
         <item name="android:padding">@dimen/padding_standard</item>
     </style>
 
+    <style name="playButtonStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center|bottom</item>
+        <item name="android:alpha">0.9</item>
+        <item name="android:src">@drawable/ic_play_arrow_black_48dp</item>
+        <item name="backgroundTint">@color/primary_material_light</item>
+        <item name="rippleColor">@android:color/transparent</item>
+        <item name="borderWidth">0dp</item>
+        <item name="elevation">6dp</item>
+        <item name="fabSize">normal</item>
+        <item name="pressedTranslationZ">12dp</item>
+    </style>
+
     <style name="favoriteButtonStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>

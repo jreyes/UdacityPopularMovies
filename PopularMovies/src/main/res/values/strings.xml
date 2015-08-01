@@ -14,9 +14,14 @@
     <string name="video">Video</string>
     <string name="vote_count">from %1$s users</string>
 
-    <string name="favorite_added">Movie added to favorites</string>
+    <string name="favorite_added">Saved to favorites</string>
     <string name="favorite_added_error">There was a problem adding the current favorite</string>
-    <string name="favorite_removed">Movie removed from favorites</string>
+    <string name="favorite_removed">Removed from favorites</string>
     <string name="favorite_removed_error">There was a problem removing the current favorite</string>
     <string name="movie_details_error">There was a problem retrieving the details of this movie</string>
+
+    <string name="menu_share">Share</string>
+    <string name="share_video">Check this \'%1$s\' video that I found at %2$s</string>
+    <string name="share_video_title">Share video</string>
+    <string name="share_video_error">There is no video to share</string>
 </resources>
