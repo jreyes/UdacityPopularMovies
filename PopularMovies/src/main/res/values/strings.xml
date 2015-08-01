@@ -23,5 +23,4 @@
     <string name="menu_share">Share</string>
     <string name="share_video">Check this \'%1$s\' video that I found at %2$s</string>
     <string name="share_video_title">Share video</string>
-    <string name="share_video_error">There is no video to share</string>
 </resources>
