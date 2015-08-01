@@ -54,7 +54,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="56dp"
+                    android:layout_marginBottom="72dp"
                     android:orientation="vertical">
 
                     <ImageView
@@ -130,47 +130,25 @@
                         style="@style/movieDetailsTextStyle"
                         android:text="@{movie.overview}" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:visibility="@{videos.size() > 0 ? View.VISIBLE : View.GONE}">
+                    <TextView
+                        style="@style/movieDetailsTitleStyle"
+                        android:text="@string/videos"
+                        android:visibility="@{videos.size() > 0 ? View.VISIBLE : View.GONE}" />
 
-                        <TextView
-                            style="@style/movieDetailsTitleStyle"
-                            android:text="@string/videos" />
+                    <com.vaporwarecorp.popularmovies.widget.AutofitGridView
+                        android:id="@+id/videos_view"
+                        style="@style/videosViewStyle"
+                        android:visibility="@{videos.size() > 0 ? View.VISIBLE : View.GONE}" />
 
-                        <com.vaporwarecorp.popularmovies.widget.AutofitGridView
-                            android:id="@+id/videos_view"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:columnWidth="120dp"
-                            android:horizontalSpacing="4dp"
-                            android:numColumns="auto_fit"
-                            android:padding="16dp"
-                            android:stretchMode="columnWidth"
-                            android:verticalSpacing="4dp" />
+                    <TextView
+                        style="@style/movieDetailsTitleStyle"
+                        android:text="@string/reviews"
+                        android:visibility="@{reviews.size() > 0 ? View.VISIBLE : View.GONE}" />
 
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:visibility="@{reviews.size() > 0 ? View.VISIBLE : View.GONE}">
-
-                        <TextView
-                            style="@style/movieDetailsTitleStyle"
-                            android:text="@string/reviews" />
-
-                        <com.vaporwarecorp.popularmovies.widget.AutofitListView
-                            android:id="@+id/reviews_view"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:padding="16dp" />
-
-                    </LinearLayout>
-
+                    <com.vaporwarecorp.popularmovies.widget.AutofitListView
+                        android:id="@+id/reviews_view"
+                        style="@style/reviewsViewStyle"
+                        android:visibility="@{reviews.size() > 0 ? View.VISIBLE : View.GONE}" />
 
                 </LinearLayout>
 
@@ -184,7 +162,7 @@
             android:src="@drawable/ic_star_black_24dp"
             android:visibility="@{!favorite ? View.VISIBLE : View.GONE}"
             app:backgroundTint="@color/primary_material_light"
-            app:rippleColor="@android:color/transparent" />
+            app:rippleColor="@color/md_yellow_700" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/remove_favorite"
@@ -192,7 +170,7 @@
             android:src="@drawable/ic_star_white_24dp"
             android:visibility="@{favorite ? View.VISIBLE : View.GONE}"
             app:backgroundTint="@color/md_yellow_700"
-            app:rippleColor="@android:color/transparent" />
+            app:rippleColor="@color/primary_material_light" />
 
     </android.support.design.widget.CoordinatorLayout>
 

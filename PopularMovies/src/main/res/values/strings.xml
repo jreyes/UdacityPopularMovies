@@ -13,20 +13,4 @@
     <string name="poster">Poster</string>
     <string name="video">Video</string>
     <string name="vote_count">from %1$s users</string>
-
-    <string name="title_text" translatable="false">Interstellar</string>
-    <string name="release_date_text" translatable="false">Nov 5, 2014</string>
-    <string name="overview_text" translatable="false">
-        Interstellar chronicles the adventures of a group of explorers who make use of a newly
-        discovered wormhole to surpass the limitations on human space travel and conquer the vast
-        distances involved in an interstellar voyage.
-    </string>
-    <string name="author_text" translatable="false">Chris</string>
-    <string name="review_text" translatable="false">
-        The Dark Knight Rises is one of the best movies to come out in 2012. The story compels
-        you to watch it time and time again. It also has I of, I my opinion, the best bad guys
-        in any movie, Bane! Batman was well played as all ways and the cast where well
-        selected. I think this movie is the best batman to see the light of day or the darkest
-        nights (pun intended).
-    </string>
 </resources>

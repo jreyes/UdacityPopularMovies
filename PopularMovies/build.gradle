@@ -38,8 +38,6 @@ dependencies {
 
   // Project Dependencies
   compile "com.android.support:design:${supportLibraryVersion}"
-  compile "com.android.support:palette-v7:${supportLibraryVersion}"
-  compile "com.android.support:recyclerview-v7:${supportLibraryVersion}"
   compile "com.android.support:support-annotations:${supportLibraryVersion}"
 
   // Rest
@@ -48,9 +46,9 @@ dependencies {
   compile "com.squareup.okhttp:okhttp-urlconnection:${okHttpVersion}"
 
   // DBFlow
-  compile "com.raizlabs.android:DBFlow-Core:2.2.1"
-  compile "com.raizlabs.android:DBFlow:2.2.1"
-  apt 'com.raizlabs.android:DBFlow-Compiler:2.2.1'
+  compile "com.raizlabs.android:DBFlow-Core:${dbFlowVersion}"
+  compile "com.raizlabs.android:DBFlow:${dbFlowVersion}"
+  apt "com.raizlabs.android:DBFlow-Compiler:${dbFlowVersion}"
 
   // Image loading
   compile "com.github.bumptech.glide:glide:${glideVersion}"

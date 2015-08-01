@@ -97,6 +97,23 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
+    <style name="videosViewStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:columnWidth">120dp</item>
+        <item name="android:horizontalSpacing">4dp</item>
+        <item name="android:numColumns">auto_fit</item>
+        <item name="android:padding">@dimen/padding_standard</item>
+        <item name="android:stretchMode">columnWidth</item>
+        <item name="android:verticalSpacing">4dp</item>
+    </style>
+
+    <style name="reviewsViewStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">@dimen/padding_standard</item>
+    </style>
+
     <style name="favoriteButtonStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
