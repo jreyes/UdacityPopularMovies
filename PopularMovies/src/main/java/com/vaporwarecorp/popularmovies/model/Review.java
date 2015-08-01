@@ -2,13 +2,7 @@ package com.vaporwarecorp.popularmovies.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import com.pushtorefresh.storio.sqlite.annotations.StorIOSQLiteColumn;
-import com.pushtorefresh.storio.sqlite.annotations.StorIOSQLiteType;
 
-import static com.vaporwarecorp.popularmovies.service.MovieDB.ReviewEntry.*;
-
-@StorIOSQLiteType(table = "reviews")
 public class Review implements Parcelable {
 // ------------------------------ FIELDS ------------------------------
 
@@ -22,69 +16,16 @@ public class Review implements Parcelable {
         }
     };
 
-    @StorIOSQLiteColumn(name = COL_AUTHOR)
-    String author;
-    @StorIOSQLiteColumn(name = COL_CONTENT)
-    String content;
-    @StorIOSQLiteColumn(name = COL_ID, key = true)
-    String id;
-    @StorIOSQLiteColumn(name = COL_MOVIE_ID)
-    int movieId;
-
-// -------------------------- STATIC METHODS --------------------------
-
-    public static Review newInstance(String id, String author, String content, int movieId) {
-        Review review = new Review();
-        review.id = id;
-        review.author = author;
-        review.content = content;
-        review.movieId = movieId;
-        return review;
-    }
+    public String author;
+    public String content;
+    public String id;
 
 // --------------------------- CONSTRUCTORS ---------------------------
-
-    Review() {
-    }
 
     protected Review(Parcel in) {
         this.author = in.readString();
         this.content = in.readString();
         this.id = in.readString();
-        this.movieId = in.readInt();
-    }
-
-// --------------------- GETTER / SETTER METHODS ---------------------
-
-    @NonNull
-    public String getAuthor() {
-        return author;
-    }
-
-    @NonNull
-    public String getContent() {
-        return content;
-    }
-
-    @NonNull
-    public String getId() {
-        return id;
-    }
-
-    public int getMovieId() {
-        return movieId;
-    }
-
-// ------------------------ CANONICAL METHODS ------------------------
-
-    @Override
-    public String toString() {
-        return "Review{" +
-                "author='" + author + '\'' +
-                ", content='" + content + '\'' +
-                ", id='" + id + '\'' +
-                ", movieId='" + movieId + '\'' +
-                '}';
     }
 
 // ------------------------ INTERFACE METHODS ------------------------
@@ -102,6 +43,5 @@ public class Review implements Parcelable {
         dest.writeString(this.author);
         dest.writeString(this.content);
         dest.writeString(this.id);
-        dest.writeInt(this.movieId);
     }
 }

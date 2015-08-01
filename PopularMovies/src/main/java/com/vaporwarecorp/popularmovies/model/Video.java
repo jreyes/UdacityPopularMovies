@@ -2,13 +2,9 @@ package com.vaporwarecorp.popularmovies.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import com.pushtorefresh.storio.sqlite.annotations.StorIOSQLiteColumn;
-import com.pushtorefresh.storio.sqlite.annotations.StorIOSQLiteType;
+import com.raizlabs.android.dbflow.structure.BaseModel;
 
-import static com.vaporwarecorp.popularmovies.service.MovieDB.VideoEntry.*;
 
-@StorIOSQLiteType(table = "videos")
 public class Video implements Parcelable {
 // ------------------------------ FIELDS ------------------------------
 
@@ -22,59 +18,14 @@ public class Video implements Parcelable {
         }
     };
 
-    @StorIOSQLiteColumn(name = COL_ID, key = true)
-    String id;
-    @StorIOSQLiteColumn(name = COL_KEY)
-    String key;
-    @StorIOSQLiteColumn(name = COL_MOVIE_ID)
-    int movieId;
-
-// -------------------------- STATIC METHODS --------------------------
-
-    public static Video newInstance(String id, String key, int movieId) {
-        Video video = new Video();
-        video.id = id;
-        video.key = key;
-        video.movieId = movieId;
-        return video;
-    }
+    public String id;
+    public String key;
 
 // --------------------------- CONSTRUCTORS ---------------------------
-
-    Video() {
-    }
 
     protected Video(Parcel in) {
         this.id = in.readString();
         this.key = in.readString();
-        this.movieId = in.readInt();
-    }
-
-// --------------------- GETTER / SETTER METHODS ---------------------
-
-    @NonNull
-    public String getId() {
-        return id;
-    }
-
-    @NonNull
-    public String getKey() {
-        return key;
-    }
-
-    public int getMovieId() {
-        return movieId;
-    }
-
-// ------------------------ CANONICAL METHODS ------------------------
-
-    @Override
-    public String toString() {
-        return "Video{" +
-                "id='" + id + '\'' +
-                ", key='" + key + '\'' +
-                ", movieId='" + movieId + '\'' +
-                '}';
     }
 
 // ------------------------ INTERFACE METHODS ------------------------
@@ -91,6 +42,5 @@ public class Video implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.id);
         dest.writeString(this.key);
-        dest.writeInt(this.movieId);
     }
 }

@@ -47,10 +47,10 @@ dependencies {
   compile "com.squareup.okhttp:okhttp:${okHttpVersion}"
   compile "com.squareup.okhttp:okhttp-urlconnection:${okHttpVersion}"
 
-  // Storio
-  compile "com.pushtorefresh.storio:sqlite:${storioVersion}"
-  compile "com.pushtorefresh.storio:sqlite-annotations:${storioVersion}"
-  apt "com.pushtorefresh.storio:sqlite-annotations-processor:${storioVersion}"
+  // DBFlow
+  compile "com.raizlabs.android:DBFlow-Core:2.2.1"
+  compile "com.raizlabs.android:DBFlow:2.2.1"
+  apt 'com.raizlabs.android:DBFlow-Compiler:2.2.1'
 
   // Image loading
   compile "com.github.bumptech.glide:glide:${glideVersion}"

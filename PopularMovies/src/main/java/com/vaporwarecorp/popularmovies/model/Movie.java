@@ -2,14 +2,9 @@ package com.vaporwarecorp.popularmovies.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import com.pushtorefresh.storio.sqlite.annotations.StorIOSQLiteColumn;
-import com.pushtorefresh.storio.sqlite.annotations.StorIOSQLiteType;
 
 import java.util.Date;
 
-import static com.vaporwarecorp.popularmovies.service.MovieDB.MovieEntry.*;
-
-@StorIOSQLiteType(table = "movies")
 public class Movie implements Parcelable {
 // ------------------------------ FIELDS ------------------------------
 
@@ -23,27 +18,18 @@ public class Movie implements Parcelable {
         }
     };
 
-    @StorIOSQLiteColumn(name = COL_BACKDROP_PATH)
-    String backdropPath;
-    @StorIOSQLiteColumn(name = COL_ID, key = true)
-    int id;
-    @StorIOSQLiteColumn(name = COL_ORIGINAL_TITLE)
-    String originalTitle;
-    @StorIOSQLiteColumn(name = COL_OVERVIEW)
-    String overview;
-    @StorIOSQLiteColumn(name = COL_POSTER_PATH)
-    String posterPath;
-    Date releaseDate;
-    @StorIOSQLiteColumn(name = COL_RELEASE_DATE)
-    Long releaseDateTime;
-    @StorIOSQLiteColumn(name = COL_VOTE_AVERAGE)
-    float voteAverage;
-    @StorIOSQLiteColumn(name = COL_VOTE_COUNT)
-    String voteCount;
+    public String backdropPath;
+    public int id;
+    public String originalTitle;
+    public String overview;
+    public String posterPath;
+    public Date releaseDate;
+    public float voteAverage;
+    public String voteCount;
 
 // --------------------------- CONSTRUCTORS ---------------------------
 
-    Movie() {
+    public Movie() {
     }
 
     protected Movie(Parcel in) {
@@ -57,57 +43,35 @@ public class Movie implements Parcelable {
         this.voteCount = in.readString();
     }
 
-// --------------------- GETTER / SETTER METHODS ---------------------
-
-    public String getBackdropPath() {
-        return backdropPath;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getOriginalTitle() {
-        return originalTitle;
-    }
-
-    public String getOverview() {
-        return overview;
-    }
-
-    public String getPosterPath() {
-        return posterPath;
-    }
-
-    public Date getReleaseDate() {
-        if (releaseDate == null) {
-            return new Date(releaseDateTime);
-        }
-        return releaseDate;
-    }
-
-    public float getVoteAverage() {
-        return voteAverage;
-    }
-
-    public String getVoteCount() {
-        return voteCount;
-    }
-
 // ------------------------ CANONICAL METHODS ------------------------
 
     @Override
-    public String toString() {
-        return "Movie{" +
-                "backdropPath='" + backdropPath + '\'' +
-                ", id=" + id +
-                ", originalTitle='" + originalTitle + '\'' +
-                ", overview='" + overview + '\'' +
-                ", posterPath='" + posterPath + '\'' +
-                ", releaseDate='" + releaseDate + '\'' +
-                ", voteAverage=" + voteAverage + '\'' +
-                ", voteCount=" + voteCount +
-                '}';
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Movie movie = (Movie) o;
+
+        return id == movie.id && Float.compare(movie.voteAverage, voteAverage) == 0 &&
+                !(backdropPath != null ? !backdropPath.equals(movie.backdropPath) : movie.backdropPath != null) &&
+                originalTitle.equals(movie.originalTitle) &&
+                !(overview != null ? !overview.equals(movie.overview) : movie.overview != null) &&
+                !(posterPath != null ? !posterPath.equals(movie.posterPath) : movie.posterPath != null) &&
+                releaseDate.equals(movie.releaseDate) &&
+                !(voteCount != null ? !voteCount.equals(movie.voteCount) : movie.voteCount != null);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = backdropPath != null ? backdropPath.hashCode() : 0;
+        result = 31 * result + id;
+        result = 31 * result + originalTitle.hashCode();
+        result = 31 * result + (overview != null ? overview.hashCode() : 0);
+        result = 31 * result + (posterPath != null ? posterPath.hashCode() : 0);
+        result = 31 * result + releaseDate.hashCode();
+        result = 31 * result + (voteAverage != +0.0f ? Float.floatToIntBits(voteAverage) : 0);
+        result = 31 * result + (voteCount != null ? voteCount.hashCode() : 0);
+        return result;
     }
 
 // ------------------------ INTERFACE METHODS ------------------------
@@ -127,7 +91,7 @@ public class Movie implements Parcelable {
         dest.writeString(originalTitle);
         dest.writeString(overview);
         dest.writeString(posterPath);
-        dest.writeLong(getReleaseDate().getTime());
+        dest.writeLong(releaseDate.getTime());
         dest.writeFloat(voteAverage);
         dest.writeString(voteCount);
     }

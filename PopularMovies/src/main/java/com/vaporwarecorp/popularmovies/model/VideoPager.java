@@ -1,20 +1,10 @@
 package com.vaporwarecorp.popularmovies.model;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class VideoPager {
 // ------------------------------ FIELDS ------------------------------
 
     public int id;
-    public List<Video> results;
-
-// ------------------------ CANONICAL METHODS ------------------------
-
-    @Override
-    public String toString() {
-        return "VideoPager{" +
-                "id=" + id +
-                ", results=" + results +
-                '}';
-    }
+    public ArrayList<Video> results;
 }

@@ -97,4 +97,16 @@
         <item name="android:layout_height">wrap_content</item>
     </style>
 
+    <style name="favoriteButtonStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">end|bottom</item>
+        <item name="android:layout_marginBottom">@dimen/padding_standard</item>
+        <item name="android:layout_marginEnd">@dimen/padding_standard</item>
+        <item name="borderWidth">0dp</item>
+        <item name="elevation">6dp</item>
+        <item name="fabSize">normal</item>
+        <item name="pressedTranslationZ">12dp</item>
+    </style>
+
 </resources>

@@ -1,158 +1,120 @@
 package com.vaporwarecorp.popularmovies.service;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.support.annotation.NonNull;
-import com.pushtorefresh.storio.sqlite.SQLiteTypeMapping;
-import com.pushtorefresh.storio.sqlite.StorIOSQLite;
-import com.pushtorefresh.storio.sqlite.impl.DefaultStorIOSQLite;
-import com.pushtorefresh.storio.sqlite.operations.put.PutResult;
-import com.pushtorefresh.storio.sqlite.queries.Query;
-import com.vaporwarecorp.popularmovies.model.*;
-import rx.Observable;
-import rx.functions.Func1;
-import rx.functions.Func2;
 
+import com.raizlabs.android.dbflow.annotation.Database;
+import com.raizlabs.android.dbflow.config.FlowManager;
+import com.raizlabs.android.dbflow.sql.language.Select;
+import com.vaporwarecorp.popularmovies.model.Movie;
+import com.vaporwarecorp.popularmovies.model.MoviePager;
+import com.vaporwarecorp.popularmovies.model.Review;
+import com.vaporwarecorp.popularmovies.model.Video;
+import com.vaporwarecorp.popularmovies.service.entity.MovieEntity;
+import com.vaporwarecorp.popularmovies.service.entity.ReviewEntity;
+import com.vaporwarecorp.popularmovies.service.entity.VideoEntity;
+
+import rx.Observable;
+import rx.Subscriber;
+import rx.functions.Func0;
+
+import java.util.ArrayList;
 import java.util.List;
 
 public class MovieDB {
-    private StorIOSQLite mStorIOSQLite;
-
-// -------------------------- INNER CLASSES --------------------------
-
-    public static class MovieEntry {
-        public static final String TABLE_NAME = "movies";
-        public static final String COL_ID = "_id";
-        public static final String COL_ORIGINAL_TITLE = "original_title";
-        public static final String COL_OVERVIEW = "overview";
-        public static final String COL_POSTER_PATH = "poster_path";
-        public static final String COL_BACKDROP_PATH = "backdrop_path";
-        public static final String COL_RELEASE_DATE = "release_date";
-        public static final String COL_VOTE_AVERAGE = "vote_average";
-        public static final String COL_VOTE_COUNT = "vote_count";
-    }
-
-    public static class ReviewEntry {
-        public static final String TABLE_NAME = "reviews";
-        public static final String COL_ID = "_id";
-        public static final String COL_AUTHOR = "author";
-        public static final String COL_CONTENT = "content";
-        public static final String COL_MOVIE_ID = "movie_id";
-    }
-
-    public static class VideoEntry {
-        public static final String TABLE_NAME = "videos";
-        public static final String COL_ID = "_id";
-        public static final String COL_KEY = "key";
-        public static final String COL_MOVIE_ID = "movie_id";
-    }
-
 // --------------------------- CONSTRUCTORS ---------------------------
 
     public MovieDB(Context context) {
-        mStorIOSQLite = provideStorIOSQLite(new MovieDBOpenHelper(context));
+        FlowManager.init(context);
+    }
+
+// --------------------- GETTER / SETTER METHODS ---------------------
+
+    private MoviePager getMoviePager() {
+        MoviePager moviePager = new MoviePager();
+        moviePager.results = convert(new Select().from(MovieEntity.class).queryList());
+        moviePager.totalPages = 1;
+        moviePager.page = 1;
+        return moviePager;
     }
 
 // -------------------------- OTHER METHODS --------------------------
 
-    public Observable<MovieDetail> getMovieDetail(final int movieId) {
-        return Observable.zip(
-                getVideos(movieId),
-                getReviews(movieId),
-                new Func2<List<Video>, List<Review>, MovieDetail>() {
-                    @Override
-                    public MovieDetail call(List<Video> videos, List<Review> reviews) {
-                        return MovieDetail.newInstance(movieId, reviews, videos);
-                    }
+    public Observable<Void> addMovie(final Movie movie, final List<Video> videos, final List<Review> reviews) {
+        return Observable.create(new Observable.OnSubscribe<Void>() {
+            @Override
+            public void call(Subscriber<? super Void> subscriber) {
+                if (subscriber.isUnsubscribed()) {
+                    return;
                 }
-        );
+                MovieEntity.newInstance(movie).save();
+                for (Review review : reviews) {
+                    ReviewEntity.newInstance(movie, review).save();
+                }
+                for (Video video : videos) {
+                    VideoEntity.newInstance(movie, video).save();
+                }
+                subscriber.onNext(null);
+                subscriber.onCompleted();
+            }
+        });
     }
 
     public Observable<MoviePager> getMovies() {
-        return mStorIOSQLite
-                .get()
-                .listOfObjects(Movie.class)
-                .withQuery(Query.builder().table(MovieEntry.TABLE_NAME).build())
-                .prepare()
-                .createObservable()
-                .flatMap(new Func1<List<Movie>, Observable<MoviePager>>() {
-                    @Override
-                    public Observable<MoviePager> call(List<Movie> movies) {
-                        return Observable.just(MoviePager.newInstance(1, 1, movies.size(), movies));
-                    }
-                });
+        return Observable.defer(new Func0<Observable<MoviePager>>() {
+            @Override
+            public Observable<MoviePager> call() {
+                return Observable.just(getMoviePager());
+            }
+        });
     }
 
-    private Observable<List<Review>> getReviews(int movieId) {
-        return mStorIOSQLite
-                .get()
-                .listOfObjects(Review.class)
-                .withQuery(Query
-                        .builder()
-                        .table(ReviewEntry.TABLE_NAME)
-                        .where(ReviewEntry.COL_MOVIE_ID + "=?")
-                        .whereArgs(movieId)
-                        .build())
-                .prepare()
-                .createObservable();
+    public boolean movieExists(int movieId) {
+        MovieEntity entity = new MovieEntity();
+        entity.id = movieId;
+        return entity.exists();
     }
 
-    private Observable<List<Video>> getVideos(int movieId) {
-        return mStorIOSQLite
-                .get()
-                .listOfObjects(Video.class)
-                .withQuery(Query
-                        .builder()
-                        .table(VideoEntry.TABLE_NAME)
-                        .where(VideoEntry.COL_MOVIE_ID + "=?")
-                        .whereArgs(movieId)
-                        .build())
-                .prepare()
-                .createObservable();
+    public Observable<Movie> removeMovie(final Movie movie) {
+        return Observable.create(new Observable.OnSubscribe<Movie>() {
+            @Override
+            public void call(Subscriber<? super Movie> subscriber) {
+                if (subscriber.isUnsubscribed()) {
+                    return;
+                }
+
+                MovieEntity entity = MovieEntity.newInstance(movie);
+                entity.deleteReviews();
+                entity.deleteVideos();
+                entity.delete();
+
+                subscriber.onNext(movie);
+                subscriber.onCompleted();
+            }
+        });
     }
 
-    private StorIOSQLite provideStorIOSQLite(@NonNull SQLiteOpenHelper sqLiteOpenHelper) {
-        return DefaultStorIOSQLite.builder()
-                .sqliteOpenHelper(sqLiteOpenHelper)
-                .addTypeMapping(Movie.class, SQLiteTypeMapping.<Movie>builder()
-                        .putResolver(new MovieStorIOSQLitePutResolver())
-                        .getResolver(new MovieStorIOSQLiteGetResolver())
-                        .deleteResolver(new MovieStorIOSQLiteDeleteResolver())
-                        .build())
-                .addTypeMapping(Video.class, SQLiteTypeMapping.<Video>builder()
-                        .putResolver(new VideoStorIOSQLitePutResolver())
-                        .getResolver(new VideoStorIOSQLiteGetResolver())
-                        .deleteResolver(new VideoStorIOSQLiteDeleteResolver())
-                        .build())
-                .addTypeMapping(Review.class, SQLiteTypeMapping.<Review>builder()
-                        .putResolver(new ReviewStorIOSQLitePutResolver())
-                        .getResolver(new ReviewStorIOSQLiteGetResolver())
-                        .deleteResolver(new ReviewStorIOSQLiteDeleteResolver())
-                        .build())
-                .build();
+    private ArrayList<Movie> convert(List<MovieEntity> entities) {
+        ArrayList<Movie> movies = new ArrayList<>();
+        for (MovieEntity entity : entities) {
+            Movie movie = new Movie();
+            movie.backdropPath = entity.backdropPath;
+            movie.id = entity.id;
+            movie.originalTitle = entity.originalTitle;
+            movie.overview = entity.overview;
+            movie.posterPath = entity.posterPath;
+            movie.releaseDate = entity.releaseDate;
+            movie.voteAverage = entity.voteAverage;
+            movie.voteCount = entity.voteCount;
+            movies.add(movie);
+        }
+        return movies;
     }
 
-    private Observable<PutResult> putMovie(Movie movie) {
-        return mStorIOSQLite
-                .put()
-                .object(movie)
-                .prepare()
-                .createObservable();
-    }
+// -------------------------- INNER CLASSES --------------------------
 
-    private Observable<PutResult> putMovie(List<Review> reviews) {
-        return mStorIOSQLite
-                .put()
-                .object(reviews)
-                .prepare()
-                .createObservable();
-    }
-
-    private Observable<PutResult> putVideos(List<Video> videos) {
-        return mStorIOSQLite
-                .put()
-                .object(videos)
-                .prepare()
-                .createObservable();
+    @Database(name = PopularMovies.NAME, version = PopularMovies.VERSION)
+    public static class PopularMovies {
+        public static final String NAME = "popular_movies";
+        public static final int VERSION = 1;
     }
 }

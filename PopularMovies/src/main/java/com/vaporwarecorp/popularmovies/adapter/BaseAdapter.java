@@ -36,8 +36,8 @@ public abstract class BaseAdapter<T> extends android.widget.BaseAdapter {
 
 // -------------------------- OTHER METHODS --------------------------
 
-    public void addItems(List<T> movies) {
-        mItems.addAll(movies);
+    public void addItems(List<T> items) {
+        mItems.addAll(items);
         notifyDataSetChanged();
     }
 
@@ -48,5 +48,10 @@ public abstract class BaseAdapter<T> extends android.widget.BaseAdapter {
 
     public ArrayList<T> getItems() {
         return new ArrayList<T>(mItems);
+    }
+
+    public void removeItem(T item) {
+        mItems.remove(item);
+        notifyDataSetChanged();
     }
 }

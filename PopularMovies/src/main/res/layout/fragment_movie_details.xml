@@ -9,6 +9,10 @@
         <import type="com.vaporwarecorp.popularmovies.util.ViewUtil" />
 
         <variable
+            name="favorite"
+            type="boolean" />
+
+        <variable
             name="movie"
             type="com.vaporwarecorp.popularmovies.model.Movie" />
 
@@ -175,18 +179,19 @@
         </ScrollView>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/favorite_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom"
-            android:layout_marginBottom="16dp"
-            android:layout_marginEnd="16dp"
+            android:id="@+id/add_favorite"
+            style="@style/favoriteButtonStyle"
+            android:src="@drawable/ic_star_black_24dp"
+            android:visibility="@{!favorite ? View.VISIBLE : View.GONE}"
+            app:backgroundTint="@color/primary_material_light"
+            app:rippleColor="@android:color/transparent" />
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/remove_favorite"
+            style="@style/favoriteButtonStyle"
             android:src="@drawable/ic_star_white_24dp"
+            android:visibility="@{favorite ? View.VISIBLE : View.GONE}"
             app:backgroundTint="@color/md_yellow_700"
-            app:borderWidth="0dp"
-            app:elevation="6dp"
-            app:fabSize="normal"
-            app:pressedTranslationZ="12dp"
             app:rippleColor="@android:color/transparent" />
 
     </android.support.design.widget.CoordinatorLayout>

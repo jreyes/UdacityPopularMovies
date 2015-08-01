@@ -1,7 +1,6 @@
 package com.vaporwarecorp.popularmovies.model;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MovieDetail {
 // ------------------------------ FIELDS ------------------------------
@@ -12,20 +11,11 @@ public class MovieDetail {
 
 // -------------------------- STATIC METHODS --------------------------
 
-    public static MovieDetail newInstance(int movieId, List<Review> reviews, List<Video> videos) {
-        ArrayList<Review> associatedReviews = new ArrayList<Review>();
-        for (Review review : reviews) {
-            associatedReviews.add(Review.newInstance(review.getId(), review.getAuthor(), review.getContent(), movieId));
-        }
-        ArrayList<Video> associatedVideos = new ArrayList<Video>();
-        for (Video video : videos) {
-            associatedVideos.add(Video.newInstance(video.getId(), video.getKey(), movieId));
-        }
-
+    public static MovieDetail newInstance(int movieId, ArrayList<Review> reviews, ArrayList<Video> videos) {
         MovieDetail movieDetails = new MovieDetail();
         movieDetails.movieId = movieId;
-        movieDetails.reviews = associatedReviews;
-        movieDetails.videos = associatedVideos;
+        movieDetails.reviews = reviews;
+        movieDetails.videos = videos;
         return movieDetails;
     }
 

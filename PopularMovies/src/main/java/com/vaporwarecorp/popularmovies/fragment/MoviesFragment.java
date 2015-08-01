@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import com.vaporwarecorp.popularmovies.PopularMoviesApp;
 import com.vaporwarecorp.popularmovies.R;
 import com.vaporwarecorp.popularmovies.adapter.MovieAdapter;
+import com.vaporwarecorp.popularmovies.events.FavoriteRemovedEvent;
 import com.vaporwarecorp.popularmovies.events.MovieSelectedEvent;
 import com.vaporwarecorp.popularmovies.events.MovieTypeSelectedEvent;
 import com.vaporwarecorp.popularmovies.model.Movie;
@@ -26,9 +27,9 @@ public class MoviesFragment extends BaseFragment
         implements EndlessGridView.OnMoreListener, AdapterView.OnItemClickListener {
 // ------------------------------ FIELDS ------------------------------
 
+    public static final int VIEW_TYPE_FAVORITES = 2;
     public static final int VIEW_TYPE_HIGHEST_RATED = 0;
     public static final int VIEW_TYPE_MOST_POPULAR = 1;
-    public static final int VIEW_TYPE_FAVORITES = 2;
 
     Callback<MoviePager> mCallback = new Callback<MoviePager>() {
         @Override
@@ -118,6 +119,20 @@ public class MoviesFragment extends BaseFragment
         mMovieAdapter.clearItems();
     }
 
+    @SuppressWarnings("unused")
+    public void onEvent(FavoriteRemovedEvent event) {
+        if (mViewType != VIEW_TYPE_FAVORITES) {
+            return;
+        }
+
+        mMovieAdapter.removeItem(event.movie);
+        if (!mMovieAdapter.getItems().isEmpty()) {
+            postMovieSelected(mMovieAdapter.getItems().get(0), false);
+        } else {
+            postMovieSelected(null, false);
+        }
+    }
+
     @Override
     public void onPause() {
         EventBus.getDefault().unregister(this);
@@ -140,6 +155,7 @@ public class MoviesFragment extends BaseFragment
     }
 
     private void initApi(Bundle savedInstanceState) {
+        mMovieDB = PopularMoviesApp.getMovieDb(getActivity());
         mMovieApi = PopularMoviesApp.getMovieApi(getActivity());
         if (savedInstanceState == null) {
             mViewType = -1;
